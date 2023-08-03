@@ -10,15 +10,16 @@ datasource db {
 model User {
   id String @id @default(uuid())
 
-  first_name    String
-  last_name     String
-  middle_name   String
-  spot_id       String?
-  role          UserRole
-  spot          Spot?    @relation(fields: [spot_id], references: [id])
-  cars          Car[]
-  refresh_token String?
-  created_at    DateTime @default(now())
+  first_name        String
+  last_name         String
+  middle_name       String
+  spot_id           String?
+  role              UserRole
+  spot              Spot?              @relation(fields: [spot_id], references: [id])
+  cars              Car[]
+  refresh_token     String?
+  created_at        DateTime           @default(now())
+  push_notification PushNotification[]
 
   @@map("users")
 }
@@ -59,6 +60,15 @@ model Spot {
   @@map("spots")
 }
 
+model PushNotification {
+  id      String                  @id @default(uuid())
+  user    User?                   @relation(fields: [user_id], references: [id])
+  user_id String?
+  status  PushNotificationStatus? @default(STATUS_ACTIVE)
+
+  @@map("push_notifications")
+}
+
 enum UserRole {
   ROLE_ADMIN
   ROLE_EMPLOYEE_SELLER
@@ -71,4 +81,8 @@ enum RouteStatus {
   STATUS_PAUSED
   STATUS_COMPLETED
   STATUS_CANCELLED
+}
+
+enum PushNotificationStatus {
+  STATUS_ACTIVE
 }
