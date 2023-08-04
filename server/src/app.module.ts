@@ -7,9 +7,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SpotModule } from './modules/spot/spot.module';
 import { CarModule } from './modules/car/car.module';
 import { RouteModule } from './modules/route/route.module';
+import { PushNotificationService } from './modules/push-notification/push-notification.service';
+import { PushNotificationModule } from './modules/push-notification/push-notification.module';
 
 @Module({
-  imports: [AuthModule, UserModule, SpotModule, CarModule, RouteModule],
+  imports: [
+    AuthModule,
+    UserModule,
+    SpotModule,
+    CarModule,
+    RouteModule,
+    PushNotificationModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

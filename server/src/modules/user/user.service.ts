@@ -26,14 +26,15 @@ export class UserService {
     });
   }
 
-  async findOne(id: Prisma.UserWhereUniqueInput): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: id });
+  async findOne(filter: Prisma.UserWhereUniqueInput): Promise<User> {
+    const user = await this.prisma.user.findFirst({ where: filter });
     return user;
   }
 
   async create(data: CreateUserDTO): Promise<User> {
     const user = await this.prisma.user.create({
       data: {
+        password: '',
         first_name: data.first_name,
         last_name: data.last_name,
         middle_name: data.middle_name,

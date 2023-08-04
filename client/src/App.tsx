@@ -1,17 +1,16 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import Table from "./table";
+import { useEffect } from "react";
 import Navbar from "./navbar/Navbar";
-import { UserRoleLocalized } from "./types/user";
-import { RouteStatusLocalized } from "./types/route";
 import CarModelTable from "./model/car/CarModelTable";
 import SpotModelTable from "./model/spot/SpotModelTable";
 import UserModelTable from "./model/user/UserModelTable";
 import RouteModelTable from "./model/route/RouteModelTable";
+import registerPushNotifications from "./worker/registerPushNotifications";
+import "./App.css";
 
 const App = () => {
+  useEffect(() => {
+    registerPushNotifications();
+  }, []);
   return (
     <div className="app">
       <Navbar />
