@@ -26,7 +26,7 @@ export class UserService {
     });
   }
 
-  async findOne(filter: Prisma.UserWhereUniqueInput): Promise<User> {
+  async findOne(filter: Partial<Prisma.UserWhereUniqueInput>): Promise<User> {
     const user = await this.prisma.user.findFirst({ where: filter });
     return user;
   }

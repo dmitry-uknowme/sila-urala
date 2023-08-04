@@ -21,35 +21,74 @@ export class PushNotificationService {
       vapidKeys.privateKey,
     );
 
-    const pushSubscription = {
-      endpoint:
-        'https://fcm.googleapis.com/fcm/send/dqyXKxe70bw:APA91bGXBL-QZ0I39jMvd-GgFPVTJDC4OqMA2DZCuDrUak25YkuuDeFlveTXjjGPRMWNnrVGaQNeEBb2aoBYTUY1vTwvGhnvgBZhcTXBCPTxU1GKH1ouYl0IHsbMNk0rVloU3G5lOU2t',
-      expirationTime: null,
-      keys: {
-        p256dh:
-          'BFKcXRJc485SKRPiedWVCb_XJDIJKcdhqzB7hkY66lL4yUKhA-97Vlt9t1iyYOeJoFNJickr6GwYwB3-LGZlt00',
-        auth: 'b-nEd_cJ4vaeVjidmbMTFA',
-      },
-    };
+    // const pushSubscription = {
+    //   endpoint:
+    //     'https://fcm.googleapis.com/fcm/send/dqyXKxe70bw:APA91bGXBL-QZ0I39jMvd-GgFPVTJDC4OqMA2DZCuDrUak25YkuuDeFlveTXjjGPRMWNnrVGaQNeEBb2aoBYTUY1vTwvGhnvgBZhcTXBCPTxU1GKH1ouYl0IHsbMNk0rVloU3G5lOU2t',
+    //   expirationTime: null,
+    //   keys: {
+    //     p256dh:
+    //       'BFKcXRJc485SKRPiedWVCb_XJDIJKcdhqzB7hkY66lL4yUKhA-97Vlt9t1iyYOeJoFNJickr6GwYwB3-LGZlt00',
+    //     auth: 'b-nEd_cJ4vaeVjidmbMTFA',
+    //   },
+    // };
 
-    const payload = { title: 'Title', body: 'Body' };
-    // const payload = '< Push Payload String >';
+    // const payload = { title: 'Title', body: 'Body' };
+    // // const payload = '< Push Payload String >';
+    // try {
+    //   const result = await webPush.sendNotification(
+    //     pushSubscription,
+    //     JSON.stringify(payload),
+    //     // options
+    //   );
+
+    //   console.log('rreee', result);
+    // } catch (error) {
+    //   console.log('errr', error);
+    // }
+  }
+
+  async createSub(userId: string, data: Prisma.PushNotificationSubCreateInput) {
+    const sub = await this.prisma.pushNotificationSub.create({
+      data: {
+        endpoint: data.endpoint,
+        exp_time: data.exp_time,
+        auth_token: data.auth_token,
+        public_key: data.public_key,
+        user: { connect: { id: userId } },
+      },
+    });
+    return sub;
+  }
+
+  async getSubs() {
+    const subs = this.prisma.pushNotificationSub.findMany();
+    return subs;
+  }
+
+  async send(userId: string, data: Prisma.PushNotificationCreateInput) {
+    const notificationSub = await this.prisma.pushNotificationSub.findFirst({
+      where: { user: { id: userId } },
+    });
+    const notification = await this.prisma.pushNotification.create({
+      data: { ...data, sub: { connect: { id: notificationSub.id } } },
+    });
+
     try {
       const result = await webPush.sendNotification(
-        pushSubscription,
-        JSON.stringify(payload),
-        // options
+        {
+          endpoint: notificationSub.endpoint,
+          keys: {
+            auth: notificationSub.auth_token,
+            p256dh: notificationSub.public_key,
+          },
+        },
+        JSON.stringify({ title: notification.title, body: notification.body }),
       );
 
       console.log('rreee', result);
     } catch (error) {
       console.log('errr', error);
     }
-  }
-
-  async createSub(data: Prisma.PushNotificationSubCreateInput) {
-    const sub = await this.prisma.pushNotificationSub.create({ data });
-    return sub;
   }
 
   //   acceptPushNotification = async (

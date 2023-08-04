@@ -3,24 +3,25 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id                String             @id @default(uuid())
-  username          String             @default("admin")
-  password          String
-  first_name        String
-  last_name         String
-  middle_name       String
-  spot_id           String?
-  role              UserRole
-  spot              Spot?              @relation(fields: [spot_id], references: [id])
-  cars              Car[]
-  refresh_token     String?
-  created_at        DateTime           @default(now())
-  push_notification PushNotification[]
+  id                  String                @id @default(uuid())
+  username            String                @default("admin")
+  password            String
+  first_name          String
+  last_name           String
+  middle_name         String
+  spot_id             String?
+  role                UserRole
+  spot                Spot?                 @relation(fields: [spot_id], references: [id])
+  cars                Car[]
+  refresh_token       String?
+  created_at          DateTime              @default(now())
+  push_notification   PushNotification[]
+  PushNotificationSub PushNotificationSub[]
 
   @@map("users")
 }
@@ -63,12 +64,14 @@ model Spot {
 
 model PushNotification {
   id         String              @id @default(uuid())
-  user       User?               @relation(fields: [user_id], references: [id])
-  user_id    String?
+  title      String?
+  body       String?
   status     String?             @default("STATUS_ACTIVE")
   sub        PushNotificationSub @relation(fields: [sub_id], references: [id])
   sub_id     String
   created_at DateTime            @default(now())
+  User       User?               @relation(fields: [userId], references: [id])
+  userId     String?
 
   @@map("push_notifications")
 }
@@ -81,6 +84,8 @@ model PushNotificationSub {
   public_key        String
   auth_token        String
   push_notification PushNotification[]
+  user              User?                   @relation(fields: [user_id], references: [id])
+  user_id           String?
   created_at        DateTime                @default(now())
 
   @@map("push_notifications_subs")

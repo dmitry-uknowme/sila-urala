@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 
@@ -13,20 +9,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    //@ts-expect-error
+  async signIn(username: string, password) {
     const user = await this.userService.findOne({ username });
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
+    if (user?.password !== password) {
+      throw new UnauthorizedException();
     }
-    return null;
-  }
-
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { username: user.username, sub: user.id, role: user.role };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: await this.jwtService.signAsync(payload),
     };
   }
 }
