@@ -9,14 +9,14 @@ import createUser from "./api/createUser";
 import getUsers from "./api/getUsers";
 import removeUser from "./api/removeUser";
 import updateUser from "./api/updateUser";
-import { User } from "./user";
+import { IUser } from "./user";
 
 const UserModelTable = () => {
   const [parentFormValue, setParentFormValue] = useState({} as User);
   const queryClient = useQueryClient();
   const { data, isFetching } = useQuery(["users"], async () => {
     const users = await getUsers();
-    return users.map((user: User) => ({
+    return users.map((user: IUser) => ({
       ...user,
       role_localized: UserRoleLocalized[user.role],
       spot_address_name: user?.spot?.address_name,
@@ -28,7 +28,6 @@ const UserModelTable = () => {
 
   const { data: spotsData } = useQuery(["spots"], async () => await getSpots());
   const { data: carsData } = useQuery(["cars"], async () => await getCars());
-
   return (
     <Table
       title={`Сотрудники (${data?.length ?? ""})`}
@@ -66,6 +65,8 @@ const UserModelTable = () => {
           { name: "last_name", label: "Фамилия" },
           { name: "first_name", label: "Имя" },
           { name: "middle_name", label: "Отчество" },
+          { name: "username", label: "Email" },
+          { name: "password", label: "Пароль" },
           {
             name: "role",
             label: "Должность",
@@ -76,21 +77,21 @@ const UserModelTable = () => {
             })),
           },
           {
-            name: "spot_id",
-            label: "Адрес точки",
-            accepter: SelectPicker,
-            options: spotsData?.map((spot) => ({
-              label: spot.address_name,
-              value: spot.id,
-            })),
-          },
-          {
             name: "car_id",
             label: "Номер автомобиля",
             accepter: SelectPicker,
             options: carsData?.map((car) => ({
               label: car.number_plate,
               value: car.id,
+            })),
+          },
+          {
+            name: "spot_id",
+            label: "Адрес точки",
+            accepter: SelectPicker,
+            options: spotsData?.map((spot) => ({
+              label: spot.address_name,
+              value: spot.id,
             })),
           },
         ],

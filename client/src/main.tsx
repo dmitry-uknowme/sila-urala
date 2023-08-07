@@ -10,9 +10,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "rsuite/dist/rsuite.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const queryClient = new QueryClient();
+
+window.queryClient = queryClient;
+window.toast = toast;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <CustomProvider locale={ruRU}>

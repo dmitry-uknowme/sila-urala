@@ -9,6 +9,15 @@ export interface CreateUserPayload {
 }
 
 const createUser = async (payload: CreateUserPayload) => {
+  payload = Object.keys(payload)
+    .map((key) => ({
+      key,
+      value:
+        payload[key].trim() === "" || payload[key] === null
+          ? undefined
+          : payload[key].trim(),
+    }))
+    .reduce((acc, curr) => ((acc[curr.key] = curr.value), acc), {});
   const { data } = await axios.post("http://localhost:3000/api/users", payload);
   return data;
 };

@@ -4,7 +4,12 @@ const Field = ({ name, label, accepter, errorMessage, ...rest }) => {
   return (
     <Form.Group controlId={name}>
       <Form.ControlLabel>{label} </Form.ControlLabel>
-      <Form.Control name={name} accepter={accepter} {...rest} />
+      <Form.Control
+        name={name}
+        accepter={accepter}
+        {...rest}
+        placement={"autoVerticalStart"}
+      />
       <Form.HelpText>{errorMessage}</Form.HelpText>
     </Form.Group>
   );

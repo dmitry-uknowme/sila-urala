@@ -1,8 +1,16 @@
-import axios from "axios"
+import axios from "axios";
 
-const getCars = async () => {
-    const { data } = await axios.get('http://localhost:3000/api/cars')
-    return data
-}
+const getCars = async (filter?: { user_id?: string }) => {
+  const response = await axios.post(
+    "http://localhost:3000/api/cars/search",
+    filter
+  );
+  return response?.data;
+};
 
-export default getCars
+// const getCars = async () => {
+//     const { data } = await axios.get('http://localhost:3000/api/cars')
+//     return data
+// }
+
+export default getCars;

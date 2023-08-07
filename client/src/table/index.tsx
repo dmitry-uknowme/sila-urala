@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User } from "../model/user/user";
+import { IUser } from "../model/user/user";
 import TableContext, { ITableContext } from "./context/TableContext";
 import TableContextProvider from "./context/TableContextProvider";
 import TableData from "./data/TableData";
@@ -12,7 +12,7 @@ interface TableProps<Model> extends TableFormProps<Model> {
   columnData: { header: string; key: string }[];
 }
 
-type Model = User;
+type Model = IUser;
 
 const Table: React.FC<ITableContext<Model>> = (props) => {
   const { title, data, columnData, form, actionType, setActionType } = props;

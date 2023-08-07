@@ -60,8 +60,17 @@ export class PushNotificationService {
     return sub;
   }
 
-  async getSubs() {
-    const subs = this.prisma.pushNotificationSub.findMany();
+  async getSubs(filter?: Prisma.PushNotificationSubWhereInput) {
+    const subs = this.prisma.pushNotificationSub.findMany({ where: filter });
+    return subs;
+  }
+
+  async getSub(filter?: Prisma.PushNotificationSubWhereInput) {
+    const subs = this.prisma.pushNotificationSub.findFirst({
+      where: filter,
+      orderBy: { created_at: 'asc' },
+    });
+    console.log('subbb', subs);
     return subs;
   }
 

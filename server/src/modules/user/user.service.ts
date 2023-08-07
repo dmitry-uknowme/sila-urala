@@ -27,35 +27,51 @@ export class UserService {
   }
 
   async findOne(filter: Partial<Prisma.UserWhereUniqueInput>): Promise<User> {
-    const user = await this.prisma.user.findFirst({ where: filter });
-    return user;
-  }
-
-  async create(data: CreateUserDTO): Promise<User> {
-    const user = await this.prisma.user.create({
-      data: {
-        password: '',
-        first_name: data.first_name,
-        last_name: data.last_name,
-        middle_name: data.middle_name,
-        role: data.role,
-        cars: { connect: { id: data.car_id } },
-        spot: { connect: { id: data.spot_id } },
-      },
+    const user = await this.prisma.user.findFirst({
+      where: filter,
+      include: { cars: true, push_notification_subs: true, spot: true },
     });
     return user;
   }
 
-  async update(userId: string, data: UpdateUserDTO): Promise<User> {
-    const user = await this.prisma.user.update({
-      where: { id: userId },
+  async create(
+    data: Prisma.UserCreateInput /* CreateUserDTO */,
+  ): Promise<User> {
+    const user = await this.prisma.user.create({
       data: {
+        username: data?.username,
+        password: data?.password,
         first_name: data.first_name,
         last_name: data.last_name,
         middle_name: data.middle_name,
         role: data.role,
-        cars: { connect: { id: data.car_id } },
-        spot: { connect: { id: data.spot_id } },
+        //@ts-expect-error
+        cars: data.car_id && { connect: { id: data.car_id } },
+        //@ts-expect-error
+        spot: data.spot_id && { connect: { id: data.spot_id } },
+      },
+    });
+
+    return user;
+  }
+
+  async update(
+    userId: string,
+    data: Prisma.UserUpdateInput /* UpdateUserDTO */,
+  ): Promise<User> {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        username: data?.username,
+        password: data?.password,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        middle_name: data.middle_name,
+        role: data.role,
+        //@ts-expect-error
+        cars: data.car_id && { connect: { id: data.car_id } },
+        //@ts-expect-error
+        spot: data.spot_id && { connect: { id: data.spot_id } },
       },
     });
     return user;

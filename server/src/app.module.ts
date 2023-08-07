@@ -11,7 +11,6 @@ import { RouteModule } from './modules/route/route.module';
 import { PushNotificationService } from './modules/push-notification/push-notification.service';
 import { PushNotificationModule } from './modules/push-notification/push-notification.module';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './modules/authhhh/guard/role.guard';
 
 @Module({
   imports: [
@@ -25,10 +24,10 @@ import { RolesGuard } from './modules/authhhh/guard/role.guard';
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
   ],
 })
 export class AppModule {}

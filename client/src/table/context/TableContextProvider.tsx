@@ -3,7 +3,6 @@ import TableContext, { ITableContext } from "./TableContext";
 
 const TableContextProvider = ({ children, value }) => {
   const [actionType, setActionType] = useState(null);
-  console.log("fff", { actionType, setActionType, ...value });
 
   return (
     <TableContext.Provider value={{ actionType, setActionType, ...value }}>

@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { createContext } from "react";
-import { User } from "../../model/user/user";
+import { IUser } from "../../model/user/user";
 
 interface IFormField {
   name: string;
@@ -9,7 +9,7 @@ interface IFormField {
   options?: { label: string; value: string | number }[];
 }
 
-type Model = User;
+type Model = IUser;
 
 export interface ITableContext<Model> {
   setActionType: React.Dispatch<

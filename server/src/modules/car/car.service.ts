@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Car, Route } from '@prisma/client';
 import { PrismaService } from 'src/core/prisma/prisma.service';
+import { PushNotificationService } from '../push-notification/push-notification.service';
+import { UserService } from '../user/user.service';
 import { AddRouteDTO } from './dto/add-route.dto';
 
 @Injectable()
 export class CarService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+    private pushNotificationService: PushNotificationService,
+  ) {}
 
   async findAll(params: {
     skip?: number;
@@ -19,7 +25,8 @@ export class CarService {
       skip,
       take,
       cursor,
-      where,
+      //@ts-expect-error
+      where: where.user_id && { users: { every: { id: where.user_id } } },
       orderBy,
     });
   }
@@ -57,6 +64,22 @@ export class CarService {
         routes: { create: routeObj },
       },
     });
+    console.log('acccccc', data);
+    if (data.status === 'STATUS_ACTIVE' || !data.status) {
+      const driver = await this.userService.findOne({
+        cars: { every: { id: carId } },
+      });
+
+      const notificationSub = await this.pushNotificationService.getSub({
+        user_id: driver.id,
+      });
+
+      const notification = await this.pushNotificationService.send(driver.id, {
+        title: `Добавлен активный рейс`,
+        body: `Добавлен активный рейс`,
+        sub: { connect: { id: notificationSub.id } },
+      });
+    }
 
     return car;
   }

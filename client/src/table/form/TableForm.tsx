@@ -3,6 +3,7 @@ import { Button, Drawer, DrawerProps, Form, Input } from "rsuite";
 import { toast } from "react-toastify";
 import Field from "../../field/Field";
 import { AxiosError } from "axios";
+import { v4 as uuidv4 } from "uuid";
 import TableContext from "../context/TableContext";
 
 // interface IFormField {
@@ -67,7 +68,7 @@ const TableForm: React.FC<DrawerProps> = (props) => {
     if (actionType === "CREATE") {
       try {
         const response = await form.create.onSubmit(data);
-        toast.success("Запись добавлена");
+        toast.success("Запись добавлена", { toastId: uuidv4() });
         onClose();
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -75,18 +76,21 @@ const TableForm: React.FC<DrawerProps> = (props) => {
             toast.error(
               `Ошибка при добавлении записи\n${error?.response?.data?.message.join(
                 "\n"
-              )}`
+              )}`,
+              { toastId: uuidv4() }
             );
             return;
           }
         }
 
-        toast.error("Возникла непредвиденная ошибка на сервере");
+        toast.error("Возникла непредвиденная ошибка на сервере", {
+          toastId: uuidv4(),
+        });
       }
     } else if (actionType === "UPDATE") {
       try {
         const response = await form.update.onSubmit(data);
-        toast.success("Запись обновлена");
+        toast.success("Запись обновлена", { toastId: uuidv4() });
         onClose();
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -94,13 +98,19 @@ const TableForm: React.FC<DrawerProps> = (props) => {
             toast.error(
               `Ошибка при обновлении записи\n${error?.response?.data?.message.join(
                 "\n"
-              )}`
+              )}`,
+              { toastId: uuidv4() }
             );
             return;
           }
         }
 
-        toast.error("Возникла непредвиденная ошибка на сервере");
+        toast.error(
+          `Возникла непредвиденная ошибка на сервере ${JSON.stringify(error)}`,
+          {
+            toastId: uuidv4(),
+          }
+        );
       }
     }
   };
@@ -140,7 +150,7 @@ const TableForm: React.FC<DrawerProps> = (props) => {
           formValue={formValue}
           fluid
         >
-          {formFields?.map((field: IFormField) => (
+          {formFields?.map((field) => (
             <Field
               name={field.name}
               label={field.label}

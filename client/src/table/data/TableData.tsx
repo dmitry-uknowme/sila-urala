@@ -15,6 +15,7 @@ import { ValueType } from "rsuite/esm/Checkbox";
 import TableContext from "../context/TableContext";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 const { Column, HeaderCell, Cell } = Table;
 const { getHeight } = DOMHelper;
@@ -40,7 +41,9 @@ const renderMenu = (props, ref) => {
     } else if (eventKey === "REMOVE") {
       try {
         const response = await form.remove.onSubmit(rowData);
-        toast.success("Запись удалена");
+        toast.success("Запись удалена", {
+          toastId: uuidv4(),
+        });
         onClose();
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -48,13 +51,18 @@ const renderMenu = (props, ref) => {
             toast.error(
               `Ошибка при удалении записи\n${error?.response?.data?.message.join(
                 "\n"
-              )}`
+              )}`,
+              {
+                toastId: uuidv4(),
+              }
             );
             return;
           }
         }
 
-        toast.error("Возникла непредвиденная ошибка на сервере");
+        toast.error("Возникла непредвиденная ошибка на сервере", {
+          toastId: uuidv4(),
+        });
       }
     }
     onClose();

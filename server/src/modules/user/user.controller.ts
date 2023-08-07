@@ -26,12 +26,15 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() dto: CreateUserDTO) {
+  createUser(@Body() dto: Prisma.UserCreateInput /* CreateUserDTO */) {
     return this.userService.create(dto);
   }
 
   @Put(':userId')
-  updateUser(@Param('userId') userId: string, @Body() dto: UpdateUserDTO) {
+  updateUser(
+    @Param('userId') userId: string,
+    @Body() dto: Prisma.UserUpdateInput /* UpdateUserDTO */,
+  ) {
     return this.userService.update(userId, dto);
   }
 

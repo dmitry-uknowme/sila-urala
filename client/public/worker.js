@@ -3,14 +3,20 @@ self.addEventListener("push", (e) => {
   console.log("on push", e.data);
   const data = e.data.json();
   e.waitUntil(
-    // () => {
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      image: "https://etpp.ru/full_logo.svg",
-      icon: "https://etpp.ru/full_logo.svg",
-      timestamp: 1000 * 60 * 5,
-    })
-    // }
+    () => {
+      // () => {
+      self.registration.showNotification(data.title, {
+        body: data.body,
+        image: "https://etpp.ru/full_logo.svg",
+        icon: "https://etpp.ru/full_logo.svg",
+        // timestamp: 1000 * 60 * 5,
+      });
+
+      if (window?.queryClient) {
+        window.queryClient.invalidateQueries();
+      }
+      // window.toast = toast;
+    }
     // .onclick(() => {
     //     window.open("https://dev.223.etpp.ru");
     // })

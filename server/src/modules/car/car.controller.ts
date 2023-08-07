@@ -11,6 +11,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { RouteService } from '../route/route.service';
 import { CarService } from './car.service';
 import { AddRouteDTO } from './dto/add-route.dto';
@@ -23,9 +24,9 @@ export class CarController {
     private routeService: RouteService,
   ) {}
 
-  @Get()
-  getCars() {
-    return this.carService.findAll({ take: 10 });
+  @Post('search')
+  searchRoutes(@Body() filter: Prisma.CarWhereInput) {
+    return this.carService.findAll({ take: 10, where: filter });
   }
 
   @Post()

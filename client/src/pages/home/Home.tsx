@@ -1,29 +1,25 @@
-import CarModelTable from "../../model/car/CarModelTable";
-import RouteModelTable from "../../model/route/RouteModelTable";
-import SpotModelTable from "../../model/spot/SpotModelTable";
-import UserModelTable from "../../model/user/UserModelTable";
-import Navbar from "../../navbar/Navbar";
-import AuthLogin from "../auth/AuthLogin";
+import { observer } from "mobx-react-lite";
+import { useContext } from "react";
+import { AuthContext } from "../../App";
+import { UserRole } from "../../types/user";
+import Admin from "../admin/Admin";
+import Driver from "../driver/Driver";
 
-const Home = () => {
-  return (
-    <div>
-      <Navbar />
-      <AuthLogin />
-      <div className="my-3">
-        <RouteModelTable />
-      </div>
-      <div className="my-3">
-        <UserModelTable />
-      </div>
-      <div className="my-3">
-        <SpotModelTable />
-      </div>
-      <div className="my-3">
-        <CarModelTable />
-      </div>
-    </div>
-  );
+import MainTemplate from "../template/MainTemplate";
+
+const getRoleHomePage = (role: UserRole) => {
+  switch (role) {
+    case UserRole.ROLE_ADMIN:
+      return <Admin />;
+    case UserRole.ROLE_EMPLOYEE_DRIVER:
+      return <Driver />;
+  }
 };
 
-export default Home;
+const Home = () => {
+  const { auth } = useContext(AuthContext);
+  const userRole = auth.session?.user?.role;
+  return <MainTemplate>{getRoleHomePage(userRole!)}</MainTemplate>;
+};
+
+export default observer(Home);

@@ -3,17 +3,22 @@ import { Equals, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { AllowNullable } from 'src/core/validation/allow-null.validation';
 
 export class CreateUserDTO {
-  @IsNotEmpty()
   @IsString()
-  first_name: string;
+  first_name?: string;
 
-  @IsNotEmpty()
   @IsString()
-  last_name: string;
+  last_name?: string;
 
-  @IsNotEmpty()
   @IsString()
-  middle_name: string;
+  middle_name?: string;
+
+  @IsString()
+  @AllowNullable()
+  username?: string | null;
+
+  @IsString()
+  @AllowNullable()
+  password?: string | null;
 
   @IsNotEmpty()
   @IsEnum(UserRole)
