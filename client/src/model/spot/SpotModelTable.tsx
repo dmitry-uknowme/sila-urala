@@ -15,6 +15,13 @@ const SpotModelTable = () => {
     return spots.map((spot) => ({
       ...spot,
       capability_localized: `${spot.capability}/${spot.max_capability} (5л-${spot.tanks5_capability}шт, 13л-${spot.tanks13_capability}шт,19л-${spot.tanks19_capability}шт)`,
+      closest_route_date: spot?.routes?.length
+        ? `${new Date(
+            spot.routes[0].start_date
+          ).toLocaleDateString()} ${new Date(
+            spot.routes[0].start_date
+          ).toLocaleTimeString()}`
+        : null,
     }));
   });
 
@@ -69,7 +76,7 @@ const SpotModelTable = () => {
           { name: "tanks13_capability", label: "Кол-во баллонов 13л (шт.)" },
           { name: "tanks19_capability", label: "Кол-во баллонов 19л (шт.)" },
           { name: "capability", label: "Текущая вместимость (л)" },
-          { name: "coordinates", label: "Координаты" },
+          // { name: "coordinates", label: "Координаты" },
         ],
       }}
       columnData={[

@@ -25,6 +25,11 @@ export class SpotController {
     return this.spotService.findAll({ take: 10 });
   }
 
+  @Post('search')
+  searchSpots(@Body() filter: Prisma.SpotWhereInput) {
+    return this.spotService.findAll({ take: 10, where: filter });
+  }
+
   @Post()
   createSpot(@Body() dto: CreateSpotDTO) {
     return this.spotService.create(dto);

@@ -20,6 +20,14 @@ const RouteModelTable = () => {
       car_number_plate: route?.car?.number_plate ?? null,
       end_spot_name: route?.end_spot?.address_name ?? null,
       status_localized: RouteStatusLocalized[route.status],
+      start_date_localized: `${new Date(
+        route.start_date
+      ).toLocaleDateString()} ${new Date(route.start_date).toLocaleTimeString(
+        [],
+        {
+          timeStyle: "short",
+        }
+      )}`,
     }));
   });
 
@@ -96,7 +104,7 @@ const RouteModelTable = () => {
             name: "add_tanks19_capability",
             label: "Добавить кол-во баллонов 19л (шт.)",
           },
-          { name: "capability", label: "Добавить итого (л)" },
+          { name: "add_capability", label: "Добавить итого (л)" },
           // {
           //   name: "start_spot_text",
           //   label: "Начальная точка",
@@ -119,11 +127,11 @@ const RouteModelTable = () => {
         ],
       }}
       columnData={[
+        { header: "Дата начала", key: "start_date_localized" },
         { header: "Номер автомобиля", key: "car_number_plate" },
-        { header: "Начальная точка", key: "start_spot_text" },
+        // { header: "Начальная точка", key: "start_spot_text" },
         { header: "Конечная точка", key: "end_spot_name" },
         { header: "Статус", key: "status_localized" },
-        { header: "Дата начала", key: "start_date" },
       ]}
       data={data}
       formValue={parentFormValue}

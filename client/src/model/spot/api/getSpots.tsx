@@ -1,7 +1,10 @@
 import axios from "axios";
 
-const getSpots = async () => {
-  const { data } = await axios.get("http://localhost:3000/api/spots");
+const getSpots = async (filter?: { car_id?: string }) => {
+  const { data } = await axios.post(
+    "http://localhost:3000/api/spots/search",
+    filter
+  );
   return data;
 };
 

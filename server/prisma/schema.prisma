@@ -47,6 +47,7 @@ model Route {
   add_tanks5_capability  Float       @default(0)
   add_tanks13_capability Float       @default(0)
   add_tanks19_capability Float       @default(0)
+  add_capability         Float       @default(0)
   start_date             DateTime?   @default(now())
   end_date               DateTime?
   created_at             DateTime    @default(now())

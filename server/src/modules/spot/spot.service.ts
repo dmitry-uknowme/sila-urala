@@ -20,6 +20,7 @@ export class SpotService {
       cursor,
       where,
       orderBy,
+      include: { users: true, routes: true },
     });
   }
 

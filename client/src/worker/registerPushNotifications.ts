@@ -9,6 +9,15 @@ const registerPushNotifications = async (userId: string) => {
   const prevSub = await pushManager.getSubscription();
   if (prevSub) {
     console.log("prev sub", prevSub);
+    const { data } = await axios.post(
+      "http://localhost:3000/api/push_notifications/subs/search",
+      {
+        endpoint: prevSub.endpoint,
+      }
+    );
+    if (!data?.length) {
+      await prevSub.unsubscribe();
+    }
     return;
   }
   let subData = await pushManager.subscribe({

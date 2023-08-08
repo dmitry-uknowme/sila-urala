@@ -20,31 +20,6 @@ export class PushNotificationService {
       vapidKeys.publicKey,
       vapidKeys.privateKey,
     );
-
-    // const pushSubscription = {
-    //   endpoint:
-    //     'https://fcm.googleapis.com/fcm/send/dqyXKxe70bw:APA91bGXBL-QZ0I39jMvd-GgFPVTJDC4OqMA2DZCuDrUak25YkuuDeFlveTXjjGPRMWNnrVGaQNeEBb2aoBYTUY1vTwvGhnvgBZhcTXBCPTxU1GKH1ouYl0IHsbMNk0rVloU3G5lOU2t',
-    //   expirationTime: null,
-    //   keys: {
-    //     p256dh:
-    //       'BFKcXRJc485SKRPiedWVCb_XJDIJKcdhqzB7hkY66lL4yUKhA-97Vlt9t1iyYOeJoFNJickr6GwYwB3-LGZlt00',
-    //     auth: 'b-nEd_cJ4vaeVjidmbMTFA',
-    //   },
-    // };
-
-    // const payload = { title: 'Title', body: 'Body' };
-    // // const payload = '< Push Payload String >';
-    // try {
-    //   const result = await webPush.sendNotification(
-    //     pushSubscription,
-    //     JSON.stringify(payload),
-    //     // options
-    //   );
-
-    //   console.log('rreee', result);
-    // } catch (error) {
-    //   console.log('errr', error);
-    // }
   }
 
   async createSub(userId: string, data: Prisma.PushNotificationSubCreateInput) {
@@ -60,7 +35,7 @@ export class PushNotificationService {
     return sub;
   }
 
-  async getSubs(filter?: Prisma.PushNotificationSubWhereInput) {
+  async findAll(filter?: Prisma.PushNotificationSubWhereInput) {
     const subs = this.prisma.pushNotificationSub.findMany({ where: filter });
     return subs;
   }

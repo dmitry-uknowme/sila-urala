@@ -25,7 +25,7 @@ export class RouteService {
       take,
       cursor,
       where,
-      orderBy: { created_at: 'desc' },
+      orderBy: { start_date: 'desc' },
       include: { car: true, end_spot: true },
     });
   }
@@ -63,20 +63,23 @@ export class RouteService {
       where: { id: routeId },
       data,
     });
-    if (data.status === 'STATUS_ACTIVE') {
+    if (data.status === RouteStatus.STATUS_ACTIVE) {
       const driver = await this.userService.findOne({
         cars: { every: { id: route.car_id } },
       });
-
       const notificationSub = await this.pushNotificationService.getSub({
         user_id: driver.id,
       });
-
-      const notification = await this.pushNotificationService.send(driver.id, {
-        title: `Добавлен активный рейс №${route.id}`,
-        body: `Добавлен активный рейс №${route.id}`,
-        sub: { connect: { id: notificationSub.id } },
-      });
+      if (notificationSub) {
+        const notification = await this.pushNotificationService.send(
+          driver.id,
+          {
+            title: `Добавлен активный рейс №${route.id}`,
+            body: `Добавлен активный рейс №${route.id}`,
+            sub: { connect: { id: notificationSub.id } },
+          },
+        );
+      }
     }
 
     return route;
@@ -97,12 +100,13 @@ export class RouteService {
       user_id: admin.id,
     });
 
-    const notification = await this.pushNotificationService.send(admin.id, {
-      title: `Пользователь vodila начал рейс №${route.id}`,
-      body: `Пользователь vodila начал рейс №${route.id}`,
-      sub: { connect: { id: notificationSub.id } },
-    });
-    console.log('notificat', notification);
+    if (notificationSub) {
+      const notification = await this.pushNotificationService.send(admin.id, {
+        title: `Пользователь vodila начал рейс №${route.id}`,
+        body: `Пользователь vodila начал рейс №${route.id}`,
+        sub: { connect: { id: notificationSub.id } },
+      });
+    }
     return route;
   }
 

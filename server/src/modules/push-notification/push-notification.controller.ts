@@ -38,10 +38,10 @@ export class PushNotificationController {
   // async sendNotification(@Param('notificationId') subId:string) {
 
   // }
-  //   @Get()
-  //   getSpots() {
-  //     return this.spotService.findAll({ take: 10 });
-  //   }
+  @Post('subs/search')
+  searchNotificationSub(@Body() filter: Prisma.PushNotificationSubWhereInput) {
+    return this.pushNotificationService.findAll(filter);
+  }
 
   //   @Post()
   //   createSpot(@Body() dto: CreateSpotDTO) {
