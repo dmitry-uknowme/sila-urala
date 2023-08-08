@@ -10,10 +10,7 @@ export interface CreateRoutePayload {
 }
 
 const createRoute = async (carId: string, payload: CreateRoutePayload) => {
-  const { data } = await axios.post(
-    `${API_URL}/api/cars/${carId}/routes`,
-    payload
-  );
+  const { data } = await axios.post(`${API_URL}/cars/${carId}/routes`, payload);
   return data;
 };
 

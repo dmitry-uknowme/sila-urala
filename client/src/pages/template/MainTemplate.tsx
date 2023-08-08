@@ -23,22 +23,22 @@ const MainTemplate: React.FC<{ children: React.ReactNode }> = ({
   const checkSession = async () => {
     const result = await auth.checkSession();
     if (result) {
-      // const userId = result?.user?.id
+      const userId = result?.user?.id;
     } else {
       navigate("/login");
     }
   };
 
-  const initServiceWorker = async () => {
-    if (!isRegisteredWorker) {
-      await navigator.serviceWorker.register("./worker.js");
-    }
-    setIsRegisteredWorker(true);
-  };
+  // const initServiceWorker = async () => {
+  //   if (!isRegisteredWorker) {
+  //     await navigator.serviceWorker.register("./worker.js");
+  //   }
+  //   setIsRegisteredWorker(true);
+  // };
 
-  useEffect(() => {
-    initServiceWorker();
-  }, [isRegisteredWorker]);
+  // useEffect(() => {
+  //   initServiceWorker();
+  // }, [isRegisteredWorker]);
 
   useEffect(() => {
     checkSession();

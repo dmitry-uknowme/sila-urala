@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import { API_URL } from "../main";
 
 const registerPushNotifications = async (userId: string) => {
+  if (!navigator?.serviceWorker) {
+    return;
+  }
   // const serviceWorker = await navigator.serviceWorker.getRegistration()!;
   const serviceWorker = await navigator.serviceWorker.register("./worker.js");
   const pushManager = serviceWorker.pushManager;
