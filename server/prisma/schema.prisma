@@ -37,26 +37,35 @@ model Car {
 }
 
 model Route {
-  id              String      @id @default(uuid())
-  start_spot_text String?
-  status          RouteStatus @default(STATUS_ACTIVE)
-  end_spot_id     String?
-  end_spot        Spot?       @relation(fields: [end_spot_id], references: [id])
-  car             Car?        @relation(fields: [car_id], references: [id])
-  car_id          String?
-  created_at      DateTime    @default(now())
+  id                     String      @id @default(uuid())
+  start_spot_text        String?
+  status                 RouteStatus @default(STATUS_ACTIVE)
+  end_spot_id            String?
+  end_spot               Spot?       @relation(fields: [end_spot_id], references: [id])
+  car                    Car?        @relation(fields: [car_id], references: [id])
+  car_id                 String?
+  add_tanks5_capability  Float       @default(0)
+  add_tanks13_capability Float       @default(0)
+  add_tanks19_capability Float       @default(0)
+  start_date             DateTime?   @default(now())
+  end_date               DateTime?
+  created_at             DateTime    @default(now())
 
   @@map("routes")
 }
 
 model Spot {
-  id           String   @id @default(uuid())
-  coordinates  String?
-  address_name String
-  capability   Float    @default(0)
-  users        User[]
-  routes       Route[]
-  created_at   DateTime @default(now())
+  id                 String   @id @default(uuid())
+  coordinates        String?
+  address_name       String
+  capability         Float    @default(0)
+  max_capability     Float    @default(0)
+  tanks5_capability  Float    @default(0)
+  tanks13_capability Float    @default(0)
+  tanks19_capability Float    @default(0)
+  users              User[]
+  routes             Route[]
+  created_at         DateTime @default(now())
 
   @@map("spots")
 }

@@ -6,9 +6,9 @@ export class AddRouteDTO {
   @IsString()
   car_id: string;
 
-  @IsString()
-  @AllowNullable()
-  start_spot_text: string;
+  // @IsString()
+  // @AllowNullable()
+  // start_spot_text: string;
 
   @IsString()
   end_spot_id: string;

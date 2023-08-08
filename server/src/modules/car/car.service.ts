@@ -53,7 +53,7 @@ export class CarService {
 
   async addRoute(carId: string, data: AddRouteDTO): Promise<Car> {
     const routeObj = {
-      start_spot_text: data.start_spot_text,
+      // start_spot_text: data.start_spot_text,
       end_spot_id: data.end_spot_id,
       status: data.status,
     };
@@ -74,11 +74,16 @@ export class CarService {
         user_id: driver.id,
       });
 
-      const notification = await this.pushNotificationService.send(driver.id, {
-        title: `Добавлен активный рейс`,
-        body: `Добавлен активный рейс`,
-        sub: { connect: { id: notificationSub.id } },
-      });
+      if (notificationSub) {
+        const notification = await this.pushNotificationService.send(
+          driver.id,
+          {
+            title: `Добавлен активный рейс`,
+            body: `Добавлен активный рейс`,
+            sub: { connect: { id: notificationSub.id } },
+          },
+        );
+      }
     }
 
     return car;

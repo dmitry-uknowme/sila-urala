@@ -36,7 +36,15 @@ const TableForm: React.FC<DrawerProps> = (props) => {
   useEffect(() => {
     if (actionType === "CREATE") {
       setFormValue(
-        formFields.reduce((acc, curr) => ((acc[curr.name] = ""), acc), {})
+        formFields.reduce(
+          (acc, curr) => (
+            curr.name.includes("date")
+              ? (acc[curr.name] = new Date())
+              : (acc[curr.name] = ""),
+            acc
+          ),
+          {}
+        )
       );
     }
     //  else if (actionType==='UPDATE') {
@@ -156,6 +164,7 @@ const TableForm: React.FC<DrawerProps> = (props) => {
               label={field.label}
               accepter={field?.accepter || Input}
               data={field?.options || []}
+              {...field}
             />
           ))}
         </Form>

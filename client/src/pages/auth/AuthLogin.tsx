@@ -40,7 +40,7 @@ const AuthLogin = () => {
   return (
     <MainTemplate>
       <div className="d-flex justify-content-center">
-        <Panel bordered bodyFill shaded>
+        <Panel bordered bodyFill shaded style={{ padding: "2rem" }}>
           <h3>Вход</h3>
           <div className="mt-3"></div>
           <Form ref={formRef} formValue={formValue} onChange={setFormValue}>

@@ -36,7 +36,14 @@ const renderMenu = (props, ref) => {
   const handleSelect = async (eventKey) => {
     if (eventKey === "UPDATE") {
       const formFields = form.fields;
-      setFormValue(rowData);
+      let data = { ...rowData };
+      if (data?.start_date) {
+        data.start_date = new Date(data.start_date);
+      }
+      if (data?.end_date) {
+        data.end_date = new Date(data.end_date);
+      }
+      setFormValue(data);
       setActionType("UPDATE");
     } else if (eventKey === "REMOVE") {
       try {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { SelectPicker } from "rsuite";
+import { DatePicker, SelectPicker } from "rsuite";
 import Table from "../../table";
 import { RouteStatusLocalized } from "../../types/route";
 import getCars from "../car/api/getCars";
@@ -23,7 +23,7 @@ const RouteModelTable = () => {
     }));
   });
 
-  const { data: spotsData } = useQuery(["spots"], async () => await getSpots());
+  const spotsData = queryClient.getQueryData(["spots"]);
   const { data: carsData } = useQuery(["cars"], async () => await getCars());
 
   return (
@@ -71,15 +71,6 @@ const RouteModelTable = () => {
             })),
           },
           {
-            name: "start_spot_text",
-            label: "Начальная точка",
-            /* accepter: SelectPicker,
-            options: spotsData?.map((spot) => ({
-              label: spot.address_name,
-              value: spot.id,
-            })), */
-          },
-          {
             name: "end_spot_id",
             label: "Конечная точка",
             accepter: SelectPicker,
@@ -88,6 +79,34 @@ const RouteModelTable = () => {
               value: spot.id,
             })),
           },
+          {
+            name: "start_date",
+            label: "Дата начала",
+            accepter: DatePicker,
+          },
+          {
+            name: "add_tanks5_capability",
+            label: "Добавить кол-во баллонов 5л (шт.)",
+          },
+          {
+            name: "add_tanks13_capability",
+            label: "Добавить кол-во баллонов 13л (шт.)",
+          },
+          {
+            name: "add_tanks19_capability",
+            label: "Добавить кол-во баллонов 19л (шт.)",
+          },
+          { name: "capability", label: "Добавить итого (л)" },
+          // {
+          //   name: "start_spot_text",
+          //   label: "Начальная точка",
+          //   /* accepter: SelectPicker,
+          //   options: spotsData?.map((spot) => ({
+          //     label: spot.address_name,
+          //     value: spot.id,
+          //   })), */
+          // },
+
           {
             name: "status",
             label: "Статус",
@@ -104,7 +123,7 @@ const RouteModelTable = () => {
         { header: "Начальная точка", key: "start_spot_text" },
         { header: "Конечная точка", key: "end_spot_name" },
         { header: "Статус", key: "status_localized" },
-        { header: "Дата создания", key: "created_at" },
+        { header: "Дата начала", key: "start_date" },
       ]}
       data={data}
       formValue={parentFormValue}

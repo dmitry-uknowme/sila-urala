@@ -26,7 +26,7 @@ const UserModelTable = () => {
     }));
   });
 
-  const { data: spotsData } = useQuery(["spots"], async () => await getSpots());
+  const spotsData = queryClient.getQueryData(["spots"]);
   const { data: carsData } = useQuery(["cars"], async () => await getCars());
   return (
     <Table

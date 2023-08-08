@@ -8,6 +8,7 @@ const Field = ({ name, label, accepter, errorMessage, ...rest }) => {
         name={name}
         accepter={accepter}
         {...rest}
+        format="yyyy-MM-dd HH:mm"
         placement={"autoVerticalStart"}
       />
       <Form.HelpText>{errorMessage}</Form.HelpText>
