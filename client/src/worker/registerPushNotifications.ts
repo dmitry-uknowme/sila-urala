@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import { API_URL } from "../main";
 
 const registerPushNotifications = async (userId: string) => {
   // const serviceWorker = await navigator.serviceWorker.getRegistration()!;
@@ -10,7 +11,7 @@ const registerPushNotifications = async (userId: string) => {
   if (prevSub) {
     console.log("prev sub", prevSub);
     const { data } = await axios.post(
-      "http://localhost:3000/api/push_notifications/subs/search",
+      `${API_URL}/push_notifications/subs/search`,
       {
         endpoint: prevSub.endpoint,
       }
@@ -35,7 +36,7 @@ const registerPushNotifications = async (userId: string) => {
 
   try {
     const response = await axios.post(
-      `http://localhost:3000/api/push_notifications/users/${userId}/subs`,
+      `${API_URL}/push_notifications/users/${userId}/subs`,
       payload
     );
     console.log("resss", response);

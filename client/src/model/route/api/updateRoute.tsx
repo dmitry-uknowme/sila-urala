@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 import { UserRole } from "../../../types/user";
 
 export interface UpdateRoutePayload {
@@ -9,10 +10,7 @@ export interface UpdateRoutePayload {
 }
 
 const updateRoute = async (routeId: string, payload: UpdateRoutePayload) => {
-  const { data } = await axios.put(
-    `http://localhost:3000/api/routes/${routeId}`,
-    payload
-  );
+  const { data } = await axios.put(`${API_URL}/routes/${routeId}`, payload);
   return data;
 };
 

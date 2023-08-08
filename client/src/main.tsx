@@ -12,6 +12,10 @@ import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import { toast, ToastContainer } from "react-toastify";
 
+const ENV = import.meta.env;
+export const BASE_URL = ENV.VITE_BASE_URL;
+export const API_URL = `${BASE_URL}/api`;
+
 const queryClient = new QueryClient();
 
 window.queryClient = queryClient;

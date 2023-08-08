@@ -1,9 +1,8 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 
 const driverStartRoute = async (routeId: string) => {
-  const { data } = await axios.post(
-    `http://localhost:3000/api/routes/${routeId}/start`
-  );
+  const { data } = await axios.post(`${API_URL}/routes/${routeId}/start`);
   return data;
 };
 

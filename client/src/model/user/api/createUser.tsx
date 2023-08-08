@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 import { UserRole } from "../../../types/user";
 
 export interface CreateUserPayload {
@@ -18,7 +19,7 @@ const createUser = async (payload: CreateUserPayload) => {
           : payload[key].trim(),
     }))
     .reduce((acc, curr) => ((acc[curr.key] = curr.value), acc), {});
-  const { data } = await axios.post("http://localhost:3000/api/users", payload);
+  const { data } = await axios.post(`${API_URL}/users`, payload);
   return data;
 };
 

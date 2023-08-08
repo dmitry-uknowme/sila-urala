@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 import { UserRole } from "../../../types/user";
 
 export interface UpdateUserPayload {
@@ -18,10 +19,7 @@ const updateUser = async (userId: string, payload: UpdateUserPayload) => {
           : payload[key].trim(),
     }))
     ?.reduce((acc, curr) => ((acc[curr.key] = curr.value), acc), {});
-  const { data } = await axios.put(
-    `http://localhost:3000/api/users/${userId}`,
-    payload
-  );
+  const { data } = await axios.put(`${API_URL}/users/${userId}`, payload);
   return data;
 };
 

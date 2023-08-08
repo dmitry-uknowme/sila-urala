@@ -5,6 +5,7 @@ import { IUser } from "../model/user/user";
 import { UserRole } from "../types/user";
 import { v4 as uuidv4 } from "uuid";
 import registerPushNotifications from "../worker/registerPushNotifications";
+import { BASE_URL } from "../main";
 
 export interface ISession {
   user: IUser;
@@ -38,7 +39,7 @@ class AuthStore {
 
   async signIn(username: string, password: string) {
     try {
-      const { data } = await axios.post(`http://localhost:3000/auth/login`, {
+      const { data } = await axios.post(`${BASE_URL}/auth/login`, {
         username,
         password,
       });
@@ -59,7 +60,7 @@ class AuthStore {
 
   async signUp(username: string, password: string, role: UserRole) {
     try {
-      const { data } = await axios.post(`http://localhost:3000/auth/signup`, {
+      const { data } = await axios.post(`${BASE_URL}/auth/signup`, {
         username,
         password,
         role,
@@ -83,7 +84,7 @@ class AuthStore {
     try {
       const token = localStorage.getItem("authToken");
       const { data } = await axios.get<ISession>(
-        `http://localhost:3000/auth/session/${token}`
+        `${BASE_URL}/auth/session/${token}`
       );
       toast.info(`Пользователь успешно авторизован`, {
         toastId: "USER_AUTH_SUCCESS",

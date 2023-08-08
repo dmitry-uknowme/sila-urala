@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 import { UserRole } from "../../../types/user";
 
 export interface CreateRoutePayload {
@@ -10,7 +11,7 @@ export interface CreateRoutePayload {
 
 const createRoute = async (carId: string, payload: CreateRoutePayload) => {
   const { data } = await axios.post(
-    `http://localhost:3000/api/cars/${carId}/routes`,
+    `${API_URL}/api/cars/${carId}/routes`,
     payload
   );
   return data;

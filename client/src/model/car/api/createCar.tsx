@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 
 export interface CreateCarPayload {
   number_plate: string;
@@ -6,7 +7,7 @@ export interface CreateCarPayload {
 }
 
 const createCar = async (payload: CreateCarPayload) => {
-  const { data } = await axios.post("http://localhost:3000/api/cars", payload);
+  const { data } = await axios.post(`${API_URL}/cars`, payload);
   return data;
 };
 

@@ -1,9 +1,8 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 
 const removeUser = async (userId: string) => {
-  const { data } = await axios.delete(
-    `http://localhost:3000/api/users/${userId}`
-  );
+  const { data } = await axios.delete(`${API_URL}/users/${userId}`);
   return data;
 };
 

@@ -1,9 +1,8 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 
 const removeRoute = async (routeId: string) => {
-  const { data } = await axios.delete(
-    `http://localhost:3000/api/routes/${routeId}`
-  );
+  const { data } = await axios.delete(`${API_URL}/routes/${routeId}`);
   return data;
 };
 

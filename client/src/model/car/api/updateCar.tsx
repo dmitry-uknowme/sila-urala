@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 
 export interface UpdateCarPayload {
   number_plate: string;
@@ -6,10 +7,7 @@ export interface UpdateCarPayload {
 }
 
 const updateCar = async (carId: string, payload: UpdateCarPayload) => {
-  const { data } = await axios.put(
-    `http://localhost:3000/api/cars/${carId}`,
-    payload
-  );
+  const { data } = await axios.put(`${API_URL}/cars/${carId}`, payload);
   return data;
 };
 

@@ -1,9 +1,8 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 
 const removeSpot = async (spotId: string) => {
-  const { data } = await axios.delete(
-    `http://localhost:3000/api/spots/${spotId}`
-  );
+  const { data } = await axios.delete(`${API_URL}/spots/${spotId}`);
   return data;
 };
 

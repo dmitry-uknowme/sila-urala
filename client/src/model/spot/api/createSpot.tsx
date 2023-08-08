@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL } from "../../../main";
 
 export interface CreateSpotPayload {
   address_name: string;
@@ -6,7 +7,7 @@ export interface CreateSpotPayload {
 }
 
 const createSpot = async (payload: CreateSpotPayload) => {
-  const { data } = await axios.post("http://localhost:3000/api/spots", payload);
+  const { data } = await axios.post(`${API_URL}/spots`, payload);
   return data;
 };
 
