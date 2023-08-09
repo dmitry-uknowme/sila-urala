@@ -213,12 +213,12 @@ const TableData: React.FC<{ data: [] }> = ({
       sortType={sortType}
       onSortColumn={handleSortColumn}
     >
-      <Column width={50} align="center" fixed>
+      {/* <Column width={10} align="center" fixed>
         <HeaderCell>№</HeaderCell>
         <Cell dataKey="number" />
-      </Column>
+      </Column> */}
 
-      <Column width={50} fixed>
+      {/* <Column width={50} fixed>
         <HeaderCell style={{ padding: 0 }}>
           <div style={{ lineHeight: "40px" }}>
             <Checkbox
@@ -234,7 +234,7 @@ const TableData: React.FC<{ data: [] }> = ({
           checkedKeys={checkedKeys}
           onChange={handleCheck}
         />
-      </Column>
+      </Column> */}
       {columnData?.map((item) => (
         <Column flexGrow={1}>
           <HeaderCell>{item.header}</HeaderCell>
@@ -242,7 +242,7 @@ const TableData: React.FC<{ data: [] }> = ({
         </Column>
       ))}
 
-      <Column width={120} align="center" fixed="right">
+      <Column width={30} align="center" fixed="right">
         <HeaderCell>
           <MoreIcon />
         </HeaderCell>
