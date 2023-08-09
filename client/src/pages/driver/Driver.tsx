@@ -54,14 +54,17 @@ const Driver = () => {
 
   const currentRoute = carRoutes?.data?.length
     ? carRoutes?.data?.find(
-        (route) => route.status === RouteStatus.STATUS_ACTIVE
+        (route) =>
+          route.status === RouteStatus.STATUS_ACTIVE ||
+          route.status === RouteStatus.STATUS_STARTED
       )
     : null;
   const currentRouteId = currentRoute?.id;
 
-  const plannedRoutes = carRoutes?.data?.filter(
-    (route) => route.id !== currentRouteId
-  );
+  const plannedRoutes =
+    // carRoutes?.length > 1
+    carRoutes?.data?.filter((route) => route.id !== currentRouteId);
+  // : carRoutes.data;
 
   return (
     <MainTemplate>
@@ -125,31 +128,27 @@ const Driver = () => {
                   route={currentRoute}
                   routeName={"Текущий рейс"}
                 />
-                <Panel
-                  header={`Следующие рейсы (${plannedRoutes?.length})`}
-                  collapsible
-                  bordered
-                >
-                  <div
-                    style={{
-                      opacity: "0.7",
-                      pointerEvents: "none",
-                      cursor: "not-allowed",
-                    }}
-                  >
-                    {plannedRoutes?.map((route) => (
-                      <RouteCard
-                        user={user}
-                        route={route}
-                        routeName={"Рейс №1"}
-                      />
-                    ))}
-                  </div>
-                </Panel>
               </>
             ) : (
               <b>Нет активных рейсов</b>
             )}
+            <Panel
+              header={`Следующие рейсы (${plannedRoutes?.length})`}
+              collapsible
+              bordered
+            >
+              <div
+                style={{
+                  opacity: "0.7",
+                  pointerEvents: "none",
+                  cursor: "not-allowed",
+                }}
+              >
+                {plannedRoutes?.map((route) => (
+                  <RouteCard user={user} route={route} routeName={"Рейс №1"} />
+                ))}
+              </div>
+            </Panel>
           </div>
         </Panel>
       </div>

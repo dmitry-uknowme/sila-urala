@@ -242,7 +242,7 @@ const TableData: React.FC<{ data: [] }> = ({
         </Column>
       ))}
 
-      <Column width={30} align="center" fixed="right">
+      <Column width={50} align="center" fixed="right">
         <HeaderCell>
           <MoreIcon />
         </HeaderCell>
