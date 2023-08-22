@@ -16,7 +16,11 @@ const ENV = import.meta.env;
 export const BASE_URL = ENV.VITE_BASE_URL;
 export const API_URL = `${BASE_URL}/api`;
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { refetchInterval: 3000, refetchOnWindowFocus: true },
+  },
+});
 
 window.queryClient = queryClient;
 window.toast = toast;
