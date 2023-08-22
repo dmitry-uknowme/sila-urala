@@ -12,7 +12,7 @@ import updateUser from "./api/updateUser";
 import { IUser } from "./user";
 
 const UserModelTable = () => {
-  const [parentFormValue, setParentFormValue] = useState({} as User);
+  const [parentFormValue, setParentFormValue] = useState({} as IUser);
   const queryClient = useQueryClient();
   const { data, isFetching } = useQuery(["users"], async () => {
     const users = await getUsers();
@@ -20,8 +20,8 @@ const UserModelTable = () => {
       ...user,
       role_localized: UserRoleLocalized[user.role],
       spot_address_name: user?.spot?.address_name,
-      car_id: user?.cars?.length ? user.cars[0]?.id : null,
-      car_number_plate: user?.cars?.length ? user.cars[0]?.number_plate : null,
+      car_id: user?.car?.id ?? null,
+      car_number_plate: user?.car?.number_plate ?? null,
       full_name: `${user.last_name} ${user.first_name} ${user.middle_name}`,
     }));
   });

@@ -52,6 +52,7 @@ export class CarService {
   }
 
   async addRoute(carId: string, data: AddRouteDTO): Promise<Car> {
+    console.log('rrrrrr', data);
     const routeObj = {
       // start_spot_text: data.start_spot_text,
       end_spot_id: data.end_spot_id,

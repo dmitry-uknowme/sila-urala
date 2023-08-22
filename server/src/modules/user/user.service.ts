@@ -46,7 +46,7 @@ export class UserService {
         middle_name: data.middle_name,
         role: data.role,
         //@ts-expect-error
-        cars: data.car_id && { connect: { id: data.car_id } },
+        car: data.car_id && { connect: { id: data.car_id } },
         //@ts-expect-error
         spot: data.spot_id && { connect: { id: data.spot_id } },
       },

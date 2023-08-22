@@ -40,7 +40,7 @@ export class RouteService {
 
   async create(data: Prisma.RouteCreateInput): Promise<Route> {
     const route = await this.prisma.route.create({ data });
-    if (data.status === 'STATUS_ACTIVE') {
+    if (data.status === RouteStatus.STATUS_ACTIVE) {
       const driver = await this.userService.findOne({
         car: { id: route.car_id },
       });
