@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
-import { Button, List, Loader, Nav, Panel } from "rsuite";
+import { Button, List, Loader, Nav, Panel, SelectPicker } from "rsuite";
 import { AuthContext } from "../../App";
 import getCars from "../../model/car/api/getCars";
 import getRoutes from "../../model/route/api/getRoutes";
@@ -15,59 +15,84 @@ import RouteCard from "./RouteCard";
 import getSpots from "../../model/spot/api/getSpots";
 import Table from "../../table";
 import updateSpot from "../../model/spot/api/updateSpot";
+import getUser from "../../model/user/api/getUser";
+import updateUser from "../../model/user/api/updateUser";
+import EditIcon from "@rsuite/icons/Edit";
 
 const Seller = () => {
   const { auth } = useContext(AuthContext);
-  const [activeNav, setActiveNav] = useState<"current" | "completed" | "cars">(
-    "current"
+  const [activeNav, setActiveNav] = useState<"active" | "completed" | "cars">(
+    "active"
   );
   const queryClient = useQueryClient();
   const user = auth?.session?.user!;
   const userId = user?.id;
 
-  const userSpots = useQuery(
-    ["spots", userId],
-    async () => await getSpots({ users: { every: { id: userId } } }),
-    // async () => await getSpots({ user_id: userId }),
+  const seller = useQuery(
+    ["seller", userId],
+    async () => await getUser(userId),
     { enabled: !!userId }
   );
-  const currentSpot = userSpots?.data?.length ? userSpots?.data[0] : null;
+
+  const currentSpot = seller?.data?.spot;
   const currentSpotId = currentSpot?.id;
 
-  const [filter, setFilter] = useState({
-    end_spot: { id: currentSpotId },
-    OR: [
-      {
-        status: {
-          equals: RouteStatus.STATUS_ACTIVE,
-        },
-      },
-      {
-        status: {
-          equals: RouteStatus.STATUS_STARTED,
-        },
-      },
-    ],
-  });
-  const carRoutes = useQuery(
-    ["sellerRoutes", filter],
-    async () => await getRoutes(filter),
+  const activeRoutes = useQuery(
+    ["activeRoutes"],
+    async () =>
+      await getRoutes({
+        end_spot_id: currentSpotId,
+        OR: [
+          {
+            status: {
+              equals: RouteStatus.STATUS_ACTIVE,
+            },
+          },
+          {
+            status: {
+              equals: RouteStatus.STATUS_STARTED,
+            },
+          },
+        ],
+      }),
     { enabled: !!currentSpotId }
   );
 
-  const currentRoute = carRoutes?.data?.length
-    ? carRoutes?.data?.find(
-        (route) => route.status === RouteStatus.STATUS_ACTIVE
+  const completedRoutes = useQuery(
+    ["completedRoutes"],
+    async () =>
+      await getRoutes({
+        end_spot_id: currentSpotId,
+        OR: [
+          {
+            status: {
+              equals: RouteStatus.STATUS_COMPLETED,
+            },
+          },
+        ],
+      }),
+    { enabled: !!currentSpotId }
+  );
+
+  const { data: spotsData } = useQuery(["spots"], async () => await getSpots());
+
+  const currentRoute = activeRoutes?.data?.length
+    ? activeRoutes?.data?.find(
+        (route) =>
+          route.status === RouteStatus.STATUS_ACTIVE ||
+          route.status === RouteStatus.STATUS_STARTED
       )
     : null;
   const currentRouteId = currentRoute?.id;
 
-  const plannedRoutes = carRoutes?.data?.filter(
+  const plannedRoutes = activeRoutes?.data?.filter(
     (route) => route.id !== currentRouteId
   );
 
   const [actionType, setActionType] = useState(null);
   const [formValue, setFormValue] = useState(currentSpot);
+  const [sellerFormValue, setSellerFormValue] = useState(seller?.data);
+  const [sellerFormType, setSellerFormType] = useState(null);
 
   useEffect(() => {
     if (actionType !== "UPDATE") {
@@ -75,9 +100,49 @@ const Seller = () => {
     }
   }, [currentSpot, actionType]);
 
+  useEffect(() => {
+    if (sellerFormType !== "UPDATE") {
+      console.log("selllerr", seller);
+      setSellerFormValue(seller?.data);
+    }
+  }, [userId, sellerFormType]);
+
   return (
     <MainTemplate>
       <div className="driver-page">
+        {sellerFormType === "UPDATE" ? (
+          <Table
+            actionType={sellerFormType}
+            setActionType={setSellerFormType}
+            form={{
+              update: {
+                title: "Сменить точку",
+                onSubmit: async (data) => {
+                  const sellerId = userId;
+                  const response = await updateUser(sellerId, {
+                    spot_id: data.spot_id,
+                  });
+                  await queryClient.invalidateQueries(["seller"]);
+                  return response;
+                },
+              },
+              fields: [
+                {
+                  name: "car_id",
+                  label: "Выберите точку",
+                  accepter: SelectPicker,
+                  options: spotsData?.map((spot) => ({
+                    label: spot.address_name,
+                    value: spot.id,
+                  })),
+                },
+              ],
+            }}
+            formValue={sellerFormValue}
+            setFormValue={setSellerFormValue}
+          />
+        ) : null}
+
         {actionType === "UPDATE" ? (
           <Table
             actionType={actionType}
@@ -126,7 +191,11 @@ const Seller = () => {
           {user ? (
             <>
               <h3>
-                Продавец {user?.username} {currentSpot?.address_name}
+                Продавец {user?.username}{" "}
+                <span onClick={() => setSellerFormType("UPDATE")}>
+                  {currentSpot?.address_name}{" "}
+                  <EditIcon style={{ fontSize: "1.3rem" }} />
+                </span>
               </h3>
             </>
           ) : null}
@@ -153,7 +222,7 @@ const Seller = () => {
                 setActiveNav(key);
               }}
             >
-              Запланированные рейсы ({carRoutes?.data?.length})
+              Запланированные рейсы ({activeRoutes?.data?.length})
             </Nav.Item>
             <Nav.Item
               active={activeNav === "completed"}
@@ -205,13 +274,19 @@ const Seller = () => {
             )}
           </Panel>
           <div className="mt-3">
-            {currentRoute ? (
+            {activeNav === "active" ? (
               <>
-                <RouteCard
-                  user={user}
-                  route={currentRoute}
-                  routeName={"Ближайший рейс"}
-                />
+                {currentRoute ? (
+                  <>
+                    <RouteCard
+                      user={user}
+                      route={currentRoute}
+                      routeName={"Текущий рейс"}
+                    />
+                  </>
+                ) : (
+                  <b>Нет активных рейсов</b>
+                )}
                 <Panel
                   header={`Следующие рейсы (${plannedRoutes?.length})`}
                   collapsible
@@ -234,9 +309,15 @@ const Seller = () => {
                   </div>
                 </Panel>
               </>
-            ) : (
-              <b>Нет активных рейсов</b>
-            )}
+            ) : activeNav === "completed" ? (
+              completedRoutes?.data?.map((route, num) => (
+                <RouteCard
+                  user={user}
+                  route={route}
+                  routeName={`Рейс №${num + 1}`}
+                />
+              ))
+            ) : null}
           </div>
         </Panel>
       </div>
