@@ -42,13 +42,19 @@ export class AuthService {
   }
 
   async getSession(token: string) {
-    const payload = await this.jwtService.verifyAsync(token, {
-      secret: 'secret',
-    });
-    const user = await this.userService.findOne({ username: payload.username });
-    return {
-      user,
-      access_token: token,
-    };
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: 'secret',
+      });
+      const user = await this.userService.findOne({
+        username: payload.username,
+      });
+      return {
+        user,
+        access_token: token,
+      };
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
   }
 }

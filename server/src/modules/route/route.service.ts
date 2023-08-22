@@ -42,7 +42,7 @@ export class RouteService {
     const route = await this.prisma.route.create({ data });
     if (data.status === 'STATUS_ACTIVE') {
       const driver = await this.userService.findOne({
-        cars: { every: { id: route.car_id } },
+        car: { id: route.car_id },
       });
 
       const notificationSub = await this.pushNotificationService.getSub({
@@ -65,7 +65,7 @@ export class RouteService {
     });
     if (data.status === RouteStatus.STATUS_ACTIVE) {
       const driver = await this.userService.findOne({
-        cars: { every: { id: route.car_id } },
+        car: { id: route.car_id },
       });
       const notificationSub = await this.pushNotificationService.getSub({
         user_id: driver.id,

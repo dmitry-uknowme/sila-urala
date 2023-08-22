@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Car, Route } from '@prisma/client';
+import { Prisma, Car, Route, RouteStatus } from '@prisma/client';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import { PushNotificationService } from '../push-notification/push-notification.service';
 import { UserService } from '../user/user.service';
@@ -65,9 +65,9 @@ export class CarService {
       },
     });
     console.log('acccccc', data);
-    if (data.status === 'STATUS_ACTIVE' || !data.status) {
+    if (data.status === RouteStatus.STATUS_ACTIVE || !data.status) {
       const driver = await this.userService.findOne({
-        cars: { every: { id: carId } },
+        car: { id: carId },
       });
 
       const notificationSub = await this.pushNotificationService.getSub({

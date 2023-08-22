@@ -25,6 +25,11 @@ export class UserController {
     return this.userService.findAll({ take: 10 });
   }
 
+  @Get(':userId')
+  getUser(@Param('userId') userId: string) {
+    return this.userService.findOne({ id: userId });
+  }
+
   @Post()
   createUser(@Body() dto: Prisma.UserCreateInput /* CreateUserDTO */) {
     return this.userService.create(dto);
