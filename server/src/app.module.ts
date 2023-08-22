@@ -11,6 +11,8 @@ import { RouteModule } from './modules/route/route.module';
 import { PushNotificationService } from './modules/push-notification/push-notification.service';
 import { PushNotificationModule } from './modules/push-notification/push-notification.module';
 import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './modules/task/task.module';
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { APP_GUARD } from '@nestjs/core';
     CarModule,
     RouteModule,
     PushNotificationModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [

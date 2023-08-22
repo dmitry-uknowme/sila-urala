@@ -163,7 +163,7 @@ const Seller = () => {
                   OR: [
                     {
                       status: {
-                        equals: RouteStatus.STATUS_STARTED,
+                        equals: RouteStatus.STATUS_COMPLETED,
                       },
                     },
                   ],

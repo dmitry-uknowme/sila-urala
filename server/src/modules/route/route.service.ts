@@ -25,7 +25,7 @@ export class RouteService {
       take,
       cursor,
       where,
-      orderBy: { start_date: 'desc' },
+      orderBy: orderBy ?? { start_date: 'desc' },
       include: { car: true, end_spot: true },
     });
   }
@@ -42,7 +42,7 @@ export class RouteService {
     const route = await this.prisma.route.create({ data });
     if (data.status === 'STATUS_ACTIVE') {
       const driver = await this.userService.findOne({
-        cars: { every: { id: route.car_id } },
+        car: { id: route.car_id },
       });
 
       const notificationSub = await this.pushNotificationService.getSub({
@@ -65,7 +65,7 @@ export class RouteService {
     });
     if (data.status === RouteStatus.STATUS_ACTIVE) {
       const driver = await this.userService.findOne({
-        cars: { every: { id: route.car_id } },
+        car: { id: route.car_id },
       });
       const notificationSub = await this.pushNotificationService.getSub({
         user_id: driver.id,
@@ -133,5 +133,20 @@ export class RouteService {
   async remove(carId: string): Promise<Route> {
     const car = await this.prisma.route.delete({ where: { id: carId } });
     return car;
+  }
+
+  async handleActiveRoutes() {
+    const routes = await this.prisma.route.updateMany({
+      where: {
+        AND: {
+          start_date: { lte: new Date() },
+          status: { equals: RouteStatus.STATUS_ACTIVE },
+        },
+      },
+      data: {
+        status: RouteStatus.STATUS_WAITING,
+      },
+    });
+    return routes;
   }
 }

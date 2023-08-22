@@ -22,14 +22,14 @@ export class UserService {
       cursor,
       where,
       orderBy,
-      include: { spot: true, cars: true },
+      include: { spot: true, car: true },
     });
   }
 
   async findOne(filter: Partial<Prisma.UserWhereUniqueInput>): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: filter,
-      include: { cars: true, push_notification_subs: true, spot: true },
+      include: { push_notification_subs: true, spot: true, car: true },
     });
     return user;
   }
@@ -69,7 +69,8 @@ export class UserService {
         middle_name: data.middle_name,
         role: data.role,
         //@ts-expect-error
-        cars: data.car_id && { connect: { id: data.car_id } },
+        // cars: data.car_id && { connect: { id: data.car_id } },
+        car: data.car_id && { connect: { id: data.car_id } },
         //@ts-expect-error
         spot: data.spot_id && { connect: { id: data.spot_id } },
       },

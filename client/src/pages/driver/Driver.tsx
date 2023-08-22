@@ -1,26 +1,35 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
-import { Button, List, Nav, Panel } from "rsuite";
+import { Nav, Panel, SelectPicker } from "rsuite";
 import { AuthContext } from "../../App";
 import getCars from "../../model/car/api/getCars";
 import getRoutes from "../../model/route/api/getRoutes";
-import updateRoute from "../../model/route/api/updateRoute";
 import { RouteStatus, RouteStatusLocalized } from "../../types/route";
 import MainTemplate from "../template/MainTemplate";
 import { v4 as uuidv4 } from "uuid";
-import driverCompleteRoute from "../../model/route/api/driverCompleteRoute";
-import driverStartRoute from "../../model/route/api/driverStartRoute";
 import RouteCard from "./RouteCard";
+import EditIcon from "@rsuite/icons/Edit";
+import updateUser from "../../model/user/api/updateUser";
+import getUser from "../../model/user/api/getUser";
+import Table from "../../table";
 
 const Driver = () => {
   const { auth } = useContext(AuthContext);
   const [activeNav, setActiveNav] = useState<"current" | "completed" | "cars">(
     "current"
   );
+  const [driverFormType, setDriverFormType] = useState(null);
+
   const queryClient = useQueryClient();
   const user = auth?.session?.user!;
   const userId = user?.id;
+
+  const driver = useQuery(
+    ["driver", userId],
+    async () => await getUser(userId),
+    { enabled: !!userId }
+  );
 
   const driverCars = useQuery(
     ["driverCars", userId],
@@ -44,13 +53,15 @@ const Driver = () => {
         },
       },
     ],
-    // status: RouteStatus.STATUS_ACTIVE,
   });
+
   const carRoutes = useQuery(
     ["driverRoutes", filter],
     async () => await getRoutes(filter),
     { enabled: !!currentCarId }
   );
+
+  const { data: carsData } = useQuery(["cars"], async () => await getCars());
 
   const currentRoute = carRoutes?.data?.length
     ? carRoutes?.data?.find(
@@ -61,18 +72,82 @@ const Driver = () => {
     : null;
   const currentRouteId = currentRoute?.id;
 
-  const plannedRoutes =
-    // carRoutes?.length > 1
-    carRoutes?.data?.filter((route) => route.id !== currentRouteId);
-  // : carRoutes.data;
+  const plannedRoutes = carRoutes?.data?.filter(
+    (route) => route.id !== currentRouteId
+  );
+
+  const completedRoutes = queryClient.getQueryData([
+    "driverRoutes",
+    {
+      car_id: currentCarId,
+      OR: [
+        {
+          status: {
+            equals: RouteStatus.STATUS_COMPLETED,
+          },
+        },
+      ],
+    },
+  ]);
+
+  console.log("dadad", completedRoutes);
+
+  const [driverFormValue, setDriverFormValue] = useState(driver?.data);
+
+  useEffect(() => {
+    if (driverFormType !== "UPDATE") {
+      setDriverFormValue(driver?.data);
+    }
+  }, [userId, driverFormType]);
 
   return (
     <MainTemplate>
       <div className="driver-page">
-        <Panel bordered bodyFill shaded style={{ padding: "2rem" }}>
+        {driverFormType === "UPDATE" ? (
+          <Table
+            actionType={driverFormType}
+            setActionType={setDriverFormType}
+            form={{
+              update: {
+                title: "Сменить автомобиль",
+                onSubmit: async (data) => {
+                  const driverId = userId;
+                  const response = await updateUser(driverId, {
+                    car_id: data.car_id,
+                  });
+                  await queryClient.invalidateQueries(["driverCars"]);
+                  return response;
+                },
+              },
+              fields: [
+                {
+                  name: "car_id",
+                  label: "Выберите автомобиль",
+                  accepter: SelectPicker,
+                  options: carsData?.map((car) => ({
+                    label: car.number_plate,
+                    value: car.id,
+                  })),
+                },
+              ],
+            }}
+            formValue={driverFormValue}
+            setFormValue={setDriverFormValue}
+          />
+        ) : null}
+        <Panel
+          bordered
+          bodyFill
+          shaded
+          style={{ padding: "2rem", display: "flex", alignItems: "center" }}
+        >
           {user ? (
             <h3>
-              Водитель {user?.username} {currentCar?.number_plate}
+              Водитель {user?.username}{" "}
+              <span onClick={() => setDriverFormType("UPDATE")}>
+                {currentCar?.number_plate}{" "}
+                <EditIcon style={{ fontSize: "1.3rem" }} />
+              </span>
             </h3>
           ) : null}
 
@@ -108,7 +183,7 @@ const Driver = () => {
                   OR: [
                     {
                       status: {
-                        equals: RouteStatus.STATUS_STARTED,
+                        equals: RouteStatus.STATUS_COMPLETED,
                       },
                     },
                   ],
