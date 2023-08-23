@@ -6,7 +6,7 @@ import RouteModelTable from "../../model/route/RouteModelTable";
 import SpotModelTable from "../../model/spot/SpotModelTable";
 import UserModelTable from "../../model/user/UserModelTable";
 import Navbar from "../../navbar/Navbar";
-import AuthLogin from "../auth/AuthLogin";
+import AuthLogin from "../auth/AuthSignIn";
 import MainTemplate from "../template/MainTemplate";
 
 const Admin = () => {

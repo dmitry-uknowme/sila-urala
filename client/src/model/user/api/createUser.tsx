@@ -11,14 +11,14 @@ export interface CreateUserPayload {
 
 const createUser = async (payload: CreateUserPayload) => {
   payload = Object.keys(payload)
-    .map((key) => ({
+    ?.map((key) => ({
       key,
       value:
-        payload[key].trim() === "" || payload[key] === null
+        payload[key]?.trim() === "" || payload[key] === null
           ? undefined
-          : payload[key].trim(),
+          : payload[key]?.trim(),
     }))
-    .reduce((acc, curr) => ((acc[curr.key] = curr.value), acc), {});
+    ?.reduce((acc, curr) => ((acc[curr.key] = curr.value), acc), {});
   const { data } = await axios.post(`${API_URL}/users`, payload);
   return data;
 };
