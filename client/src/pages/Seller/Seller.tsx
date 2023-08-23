@@ -31,7 +31,7 @@ const Seller = () => {
   const seller = useQuery(
     ["seller", userId],
     async () => await getUser(userId),
-    { enabled: !!userId }
+    { enabled: !!userId, refetchInterval: false, refetchOnWindowFocus: false }
   );
 
   const currentSpot = seller?.data?.spot;
@@ -101,11 +101,10 @@ const Seller = () => {
   }, [currentSpot, actionType]);
 
   useEffect(() => {
-    if (sellerFormType !== "UPDATE") {
-      console.log("selllerr", seller);
+    if (seller?.data) {
       setSellerFormValue(seller?.data);
     }
-  }, [userId, sellerFormType]);
+  }, [seller]);
 
   return (
     <MainTemplate>
@@ -119,16 +118,21 @@ const Seller = () => {
                 title: "Сменить точку",
                 onSubmit: async (data) => {
                   const sellerId = userId;
-                  const response = await updateUser(sellerId, {
-                    spot_id: data.spot_id,
-                  });
+                  try {
+                    const response = await updateUser(sellerId, {
+                      spot_id: data.spot_id,
+                    });
+                    return response;
+                  } catch (error) {
+                    console.log("ddd", error);
+                  }
+
                   await queryClient.invalidateQueries(["seller"]);
-                  return response;
                 },
               },
               fields: [
                 {
-                  name: "car_id",
+                  name: "spot_id",
                   label: "Выберите точку",
                   accepter: SelectPicker,
                   options: spotsData?.map((spot) => ({
@@ -202,24 +206,9 @@ const Seller = () => {
 
           <Nav appearance="subtle" justified>
             <Nav.Item
-              active={activeNav === "current"}
+              active={activeNav === "active"}
               onSelect={(key) => {
-                setFilter({
-                  end_spot: { id: currentSpotId },
-                  OR: [
-                    {
-                      status: {
-                        equals: RouteStatus.STATUS_ACTIVE,
-                      },
-                    },
-                    {
-                      status: {
-                        equals: RouteStatus.STATUS_STARTED,
-                      },
-                    },
-                  ],
-                });
-                setActiveNav(key);
+                setActiveNav("active");
               }}
             >
               Запланированные рейсы ({activeRoutes?.data?.length})
@@ -227,22 +216,11 @@ const Seller = () => {
             <Nav.Item
               active={activeNav === "completed"}
               onSelect={(key) => {
-                setFilter({
-                  end_spot: { id: currentSpotId },
-                  OR: [
-                    {
-                      status: {
-                        equals: RouteStatus.STATUS_COMPLETED,
-                      },
-                    },
-                  ],
-                });
-                setActiveNav(key);
+                setActiveNav("completed");
               }}
             >
               Завершенные рейсы
             </Nav.Item>
-            <Nav.Item>Точки</Nav.Item>
           </Nav>
           <h4 className="rs-panel-header d-flex align-items-center py-0 mt-4">
             <div className="rs-panel-title">Информация о точке</div>

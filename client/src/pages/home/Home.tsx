@@ -6,7 +6,7 @@ import { AuthContext } from "../../App";
 import { UserRole } from "../../types/user";
 import Admin from "../admin/Admin";
 import Driver from "../driver/Driver";
-import Seller from "../Seller/Seller";
+import Seller from "../seller/Seller";
 
 import MainTemplate from "../template/MainTemplate";
 

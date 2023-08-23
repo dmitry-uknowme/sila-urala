@@ -16,7 +16,7 @@ const updateUser = async (userId: string, payload: UpdateUserPayload) => {
       value:
         payload[key]?.trim() === "" || payload[key] === null
           ? undefined
-          : payload[key].trim(),
+          : payload[key]?.trim(),
     }))
     ?.reduce((acc, curr) => ((acc[curr.key] = curr.value), acc), {});
   const { data } = await axios.put(`${API_URL}/users/${userId}`, payload);
