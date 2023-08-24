@@ -1,6 +1,6 @@
 import { Form } from "rsuite";
 
-const Field = ({ name, label, accepter, errorMessage, ...rest }) => {
+const Field = ({ name, label, accepter, errorMessage, helpText, ...rest }) => {
   return (
     <Form.Group controlId={name}>
       <Form.ControlLabel>{label} </Form.ControlLabel>
@@ -11,7 +11,8 @@ const Field = ({ name, label, accepter, errorMessage, ...rest }) => {
         format="yyyy-MM-dd HH:mm"
         placement={"autoVerticalStart"}
       />
-      <Form.HelpText>{errorMessage}</Form.HelpText>
+      {helpText ? <Form.HelpText>{helpText}</Form.HelpText> : null}
+      <Form.ErrorMessage>{errorMessage}</Form.ErrorMessage>
     </Form.Group>
   );
 };

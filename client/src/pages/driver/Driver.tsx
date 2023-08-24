@@ -177,27 +177,29 @@ const Driver = () => {
                 ) : (
                   <b>Нет активных рейсов</b>
                 )}
-                <Panel
-                  header={`Следующие рейсы (${plannedRoutes?.length})`}
-                  collapsible
-                  bordered
-                >
-                  <div
-                    style={{
-                      opacity: "0.7",
-                      pointerEvents: "none",
-                      cursor: "not-allowed",
-                    }}
+                {plannedRoutes?.length ? (
+                  <Panel
+                    header={`Следующие рейсы (${plannedRoutes?.length})`}
+                    collapsible
+                    bordered
                   >
-                    {plannedRoutes?.map((route) => (
-                      <RouteCard
-                        user={user}
-                        route={route}
-                        routeName={"Рейс №1"}
-                      />
-                    ))}
-                  </div>
-                </Panel>
+                    <div
+                      style={{
+                        opacity: "0.7",
+                        pointerEvents: "none",
+                        cursor: "not-allowed",
+                      }}
+                    >
+                      {plannedRoutes?.map((route) => (
+                        <RouteCard
+                          user={user}
+                          route={route}
+                          routeName={"Рейс №1"}
+                        />
+                      ))}
+                    </div>
+                  </Panel>
+                ) : null}
               </>
             ) : activeNav === "completed" ? (
               completedRoutes?.data?.map((route, num) => (
