@@ -1,0 +1,31 @@
+name: App deploy prod
+
+on:
+    push:
+        branches:
+            - prod
+
+jobs:
+    web-deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+
+            - name: Ssh connect
+              uses: appleboy/ssh-action@master
+              with:
+                  host: "149.154.70.211"
+                  username: "root"
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: 22
+                  script: |
+                      cd /var/www/_temp-prod_sila-urala.site
+                      git pull origin prod
+                      cd client
+                      pnpm run build
+                      pm2 restart server
+                      git reset --hard FETCH_HEAD
+                      git clean -d -f --exclude secrets
