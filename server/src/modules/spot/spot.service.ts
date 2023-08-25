@@ -34,7 +34,7 @@ export class SpotService {
     return user;
   }
 
-  async update(spotId: string, data: Prisma.SpotCreateInput): Promise<Spot> {
+  async update(spotId: string, data: Prisma.SpotUpdateInput): Promise<Spot> {
     const user = await this.prisma.spot.update({ where: { id: spotId }, data });
     return user;
   }

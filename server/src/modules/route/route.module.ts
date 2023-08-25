@@ -4,6 +4,8 @@ import { PushNotificationService } from '../push-notification/push-notification.
 import { UserService } from '../user/user.service';
 import { RouteController } from './route.controller';
 import { RouteService } from './route.service';
+import { SpotService } from '../spot/spot.service';
+import { CarService } from '../car/car.service';
 
 @Module({
   controllers: [RouteController],
@@ -11,6 +13,8 @@ import { RouteService } from './route.service';
     RouteService,
     PrismaService,
     UserService,
+    SpotService,
+    CarService,
     PushNotificationService,
   ],
   exports: [RouteService],

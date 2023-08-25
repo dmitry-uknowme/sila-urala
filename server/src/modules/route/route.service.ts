@@ -3,12 +3,16 @@ import { Prisma, Route, RouteStatus, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import { PushNotificationService } from '../push-notification/push-notification.service';
 import { UserService } from '../user/user.service';
+import { SpotService } from '../spot/spot.service';
+import { CarService } from '../car/car.service';
 
 @Injectable()
 export class RouteService {
   constructor(
     private prisma: PrismaService,
     private userService: UserService,
+    private spotService: SpotService,
+    private carService: CarService,
     private pushNotificationService: PushNotificationService,
   ) {}
 
@@ -115,6 +119,17 @@ export class RouteService {
       where: { id: routeId },
       data: { status: RouteStatus.STATUS_COMPLETED },
     });
+
+    const spotId = route.end_spot_id;
+    const spot = await this.spotService.findOne({ id: spotId });
+
+    const prevCapability = spot.capability;
+    const addCapability = route.add_capability;
+
+    await this.spotService.update(spotId, {
+      capability: prevCapability + addCapability,
+    });
+
     const admin = await this.userService.findOne({ role: UserRole.ROLE_ADMIN });
     const notificationSub = await this.pushNotificationService.getSub({
       user_id: admin.id,
@@ -136,7 +151,16 @@ export class RouteService {
   }
 
   async handleActiveRoutes() {
-    const routes = await this.prisma.route.updateMany({
+    const routes = await this.findAll({
+      where: {
+        AND: {
+          start_date: { lte: new Date() },
+          status: { equals: RouteStatus.STATUS_ACTIVE },
+        },
+      },
+    });
+
+    await this.prisma.route.updateMany({
       where: {
         AND: {
           start_date: { lte: new Date() },
@@ -147,6 +171,27 @@ export class RouteService {
         status: RouteStatus.STATUS_WAITING,
       },
     });
+
+    await Promise.all(
+      routes.map(async (route) => {
+        const car = await this.carService.findOne(route.car_id);
+        console.log('c', car);
+        const user = await this.userService.findOne({ car_id: car.id });
+        console.log('u', user);
+        const pushNotificationSub = await this.pushNotificationService.getSub({
+          user_id: user.id,
+        });
+        if (!pushNotificationSub) return;
+        console.log('ps', pushNotificationSub);
+
+        const notification = await this.pushNotificationService.send(user.id, {
+          title: `Рейс №${route.id} ожидает принятия`,
+          body: `Рейс №${route.id} ожидает принятия`,
+          sub: { connect: { id: pushNotificationSub.id } },
+        });
+      }),
+    );
+
     return routes;
   }
 }

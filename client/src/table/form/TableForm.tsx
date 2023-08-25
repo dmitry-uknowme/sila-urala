@@ -164,6 +164,40 @@ const TableForm: React.FC<DrawerProps> = (props) => {
               label={field.label}
               accepter={field?.accepter || Input}
               data={field?.options || []}
+              onChange={(value) => {
+                if (field?.name?.includes("add_tanks")) {
+                  setFormValue((state) => {
+                    const totalCapability =
+                      (parseFloat(state.add_tanks5_capability) || 0) * 5 +
+                      (parseFloat(state.add_tanks13_capability) || 0) * 13 +
+                      (parseFloat(state.add_tanks19_capability) || 0) * 19;
+                    return {
+                      ...state,
+                      [field.name]: value,
+                      add_capability: totalCapability,
+                    };
+                  });
+                  return;
+                }
+                if (
+                  field?.name?.includes("tanks") &&
+                  !field?.name?.includes("add")
+                ) {
+                  setFormValue((state) => {
+                    const totalCapability =
+                      (parseFloat(state.tanks5_capability) || 0) * 5 +
+                      (parseFloat(state.tanks13_capability) || 0) * 13 +
+                      (parseFloat(state.tanks19_capability) || 0) * 19;
+                    return {
+                      ...state,
+                      [field.name]: value,
+                      capability: totalCapability,
+                    };
+                  });
+                  return;
+                }
+                setFormValue((state) => ({ ...state, [field.name]: value }));
+              }}
               {...field}
             />
           ))}

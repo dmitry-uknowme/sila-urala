@@ -6,7 +6,7 @@ import { RouteService } from '../route/route.service';
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);
   constructor(private routeService: RouteService) {}
-  @Cron('30 * * * * *')
+  @Cron('10 * * * * *')
   async handleCron() {
     await this.routeService.handleActiveRoutes();
     this.logger.debug(`Called every second ${new Date().toUTCString()}`);
