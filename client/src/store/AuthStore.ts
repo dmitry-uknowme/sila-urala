@@ -91,8 +91,8 @@ class AuthStore {
       });
       this.setSession(data);
       this.setIsAuth(true);
-      console.log("register times");
-      await registerPushNotifications(data.user.id);
+      // console.log("register times");
+      // await registerPushNotifications(data.user.id);
       return data;
     } catch (error) {
       if (error instanceof AxiosError) {

@@ -16,7 +16,6 @@ export const timezones = [
     offset_name: "Asia/Yekaterinburg",
     offset_value: 500,
   },
-  // "+05:00" = "Asia/Yekaterinburg",
 ];
 
 const formatDate = (
@@ -38,14 +37,20 @@ const formatDate = (
     }
 
     const localTimezone = format(new Date(), "XXX") as TimezoneOffset;
+
+    const candidateDate = new Date(timestamp);
+    const todayDate = new Date();
+    const isToday =
+      `${todayDate.getUTCFullYear()}-${todayDate.getMonth()}-${todayDate.getDate()}` ===
+      `${candidateDate.getUTCFullYear()}-${candidateDate.getMonth()}-${candidateDate.getDate()}`;
+
     if (!timeZone) {
       timeZone = localTimezone;
     }
     if (timeZone) {
       return format(
         new Date(timestamp),
-        // timeZone,
-        pattern || "dd.MM.yyyy HH:mm"
+        pattern ?? isToday ? "HH:mm" : "dd.MM.yyyy HH:mm"
       );
     }
 

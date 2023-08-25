@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { DatePicker, SelectPicker } from "rsuite";
+import formatDate from "../../helpers/formatDate";
 import Table from "../../table";
 import { RouteStatusLocalized } from "../../types/route";
 import getCars from "../car/api/getCars";
@@ -20,14 +21,7 @@ const RouteModelTable = () => {
       car_number_plate: route?.car?.number_plate ?? null,
       end_spot_name: route?.end_spot?.address_name ?? null,
       status_localized: RouteStatusLocalized[route.status],
-      start_date_localized: `${new Date(
-        route.start_date
-      ).toLocaleDateString()} ${new Date(route.start_date).toLocaleTimeString(
-        [],
-        {
-          timeStyle: "short",
-        }
-      )}`,
+      start_date_localized: formatDate(route.start_date),
     }));
   });
 

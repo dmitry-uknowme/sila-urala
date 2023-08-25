@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import formatDate from "../../helpers/formatDate";
 import Table from "../../table";
 import createSpot from "./api/createSpot";
 import getSpots from "./api/getSpots";
@@ -16,11 +17,7 @@ const SpotModelTable = () => {
       ...spot,
       capability_localized: `${spot.capability}/${spot.max_capability} (5л-${spot.tanks5_capability}шт, 13л-${spot.tanks13_capability}шт,19л-${spot.tanks19_capability}шт)`,
       closest_route_date: spot?.routes?.length
-        ? `${new Date(
-            spot.routes[0].start_date
-          ).toLocaleDateString()} ${new Date(
-            spot.routes[0].start_date
-          ).toLocaleTimeString()}`
+        ? formatDate(spot.routes[0].start_date)
         : null,
     }));
   });
