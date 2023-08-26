@@ -18,7 +18,7 @@ export const API_URL = `${BASE_URL}/api`;
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { refetchInterval: 10000, refetchOnWindowFocus: true },
+    queries: { refetchInterval: 3000, refetchOnWindowFocus: true },
   },
 });
 
