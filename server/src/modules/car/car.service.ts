@@ -31,8 +31,8 @@ export class CarService {
     });
   }
 
-  async findOne(id: string): Promise<Car> {
-    const car = await this.prisma.car.findUnique({ where: { id } });
+  async findOne(filter: Prisma.CarWhereInput): Promise<Car> {
+    const car = await this.prisma.car.findFirst({ where: filter });
     return car;
   }
 
@@ -52,16 +52,11 @@ export class CarService {
   }
 
   async addRoute(carId: string, data: AddRouteDTO): Promise<Car> {
-    const routeObj = {
-      // start_spot_text: data.start_spot_text,
-      end_spot_id: data.end_spot_id,
-      status: data.status,
-    };
-
     const car = await this.prisma.car.update({
       where: { id: carId },
       data: {
-        routes: { create: routeObj },
+        //@ts-expect-error
+        routes: { create: { ...data, car_id: undefined } },
       },
     });
     if (data.status === RouteStatus.STATUS_ACTIVE || !data.status) {
@@ -79,7 +74,6 @@ export class CarService {
           {
             title: `Добавлен активный рейс`,
             body: `Добавлен активный рейс`,
-            sub: { connect: { id: notificationSub.id } },
           },
         );
       }

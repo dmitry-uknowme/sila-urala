@@ -5,6 +5,7 @@ import { PushNotificationService } from '../push-notification/push-notification.
 import { UserService } from '../user/user.service';
 import { SpotService } from '../spot/spot.service';
 import { CarService } from '../car/car.service';
+import formatDate from 'src/helpers/formatDate';
 
 @Injectable()
 export class RouteService {
@@ -49,14 +50,26 @@ export class RouteService {
         car: { id: route.car_id },
       });
 
-      const notificationSub = await this.pushNotificationService.getSub({
-        user_id: driver.id,
+      const seller = await this.userService.findOne({
+        spot: { id: route.car_id },
       });
 
-      const notification = await this.pushNotificationService.send(driver.id, {
-        title: `Добавлен активный рейс №${route.id}`,
-        body: `Добавлен активный рейс №${route.id}`,
-        sub: { connect: { id: notificationSub.id } },
+      await this.pushNotificationService.send(driver.id, {
+        title: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
+          route.start_date,
+        )}`,
+        body: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
+          route.start_date,
+        )}`,
+      });
+
+      await this.pushNotificationService.send(seller.id, {
+        title: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
+          route.start_date,
+        )}`,
+        body: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
+          route.start_date,
+        )}`,
       });
     }
     return route;
@@ -71,57 +84,81 @@ export class RouteService {
       const driver = await this.userService.findOne({
         car: { id: route.car_id },
       });
-      const notificationSub = await this.pushNotificationService.getSub({
-        user_id: driver.id,
+      const seller = await this.userService.findOne({
+        spot: { id: route.end_spot_id },
       });
-      if (notificationSub) {
-        const notification = await this.pushNotificationService.send(
-          driver.id,
-          {
-            title: `Добавлен активный рейс №${route.id}`,
-            body: `Добавлен активный рейс №${route.id}`,
-            sub: { connect: { id: notificationSub.id } },
-          },
-        );
-      }
+
+      await this.pushNotificationService.send(driver.id, {
+        title: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
+          route.start_date,
+        )}`,
+        body: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
+          route.start_date,
+        )}`,
+      });
+
+      await this.pushNotificationService.send(seller.id, {
+        title: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
+          route.start_date,
+        )}`,
+        body: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
+          route.start_date,
+        )}`,
+      });
     }
 
     return route;
   }
 
   async driverStart(routeId: string): Promise<Route> {
-    const route = await this.prisma.route.update({
-      where: { id: routeId },
-      data: { status: RouteStatus.STATUS_STARTED },
-    });
+    const route = await this.findOne({ id: routeId });
+    await this.update(routeId, { status: RouteStatus.STATUS_STARTED });
 
-    const driverId = route.car_id;
+    const carId = route.car_id;
+    const car = await this.carService.findOne({ id: carId });
+    const driver = await this.userService.findOne({ car_id: car.id });
+
+    const spotId = route.end_spot_id;
+    const spot = await this.spotService.findOne({ id: spotId });
+    const seller = await this.userService.findOne({ spot_id: spotId });
 
     const admin = await this.userService.findOne({
       role: UserRole.ROLE_ADMIN,
     });
-    const notificationSub = await this.pushNotificationService.getSub({
+    const adminNotificationSub = await this.pushNotificationService.getSub({
       user_id: admin.id,
     });
-
-    if (notificationSub) {
+    if (adminNotificationSub) {
       const notification = await this.pushNotificationService.send(admin.id, {
-        title: `Пользователь vodila начал рейс №${route.id}`,
-        body: `Пользователь vodila начал рейс №${route.id}`,
-        sub: { connect: { id: notificationSub.id } },
+        title: `Пользователь ${driver.username} начал рейс №${route.id}`,
+        body: `Пользователь ${driver.username} №${route.id}`,
       });
     }
+
+    const sellerNotificationSub = await this.pushNotificationService.getSub({
+      user_id: admin.id,
+    });
+    if (sellerNotificationSub) {
+      const notification = await this.pushNotificationService.send(seller.id, {
+        title: `Пользователь ${driver.username} начал рейс №${route.id}`,
+        body: `Пользователь ${driver.username} №${route.id}`,
+      });
+    }
+
     return route;
   }
 
   async driverComplete(routeId: string): Promise<Route> {
-    const route = await this.prisma.route.update({
-      where: { id: routeId },
-      data: { status: RouteStatus.STATUS_COMPLETED },
-    });
+    const route = await this.findOne({ id: routeId });
+
+    await this.update(routeId, { status: RouteStatus.STATUS_COMPLETED });
 
     const spotId = route.end_spot_id;
     const spot = await this.spotService.findOne({ id: spotId });
+
+    const carId = route.car_id;
+    const car = await this.carService.findOne({ id: carId });
+    const driver = await this.userService.findOne({ car_id: car.id });
 
     const prevCapability = spot.capability;
     const addCapability = route.add_capability;
@@ -136,12 +173,10 @@ export class RouteService {
     });
 
     const notification = await this.pushNotificationService.send(admin.id, {
-      title: `Пользователь vodila завершил рейс №${route.id}`,
-      body: `Пользователь vodila завершил рейс №${route.id}`,
-      sub: { connect: { id: notificationSub.id } },
+      title: `Пользователь ${driver.username} завершил рейс №${route.id}`,
+      body: `Пользователь ${driver.username} завершил рейс №${route.id}`,
     });
 
-    console.log('notificat', notification);
     return route;
   }
 
@@ -174,7 +209,7 @@ export class RouteService {
 
     await Promise.all(
       routes.map(async (route) => {
-        const car = await this.carService.findOne(route.car_id);
+        const car = await this.carService.findOne({ id: route.car_id });
         console.log('c', car);
         const user = await this.userService.findOne({ car_id: car.id });
         console.log('u', user);
@@ -187,7 +222,6 @@ export class RouteService {
         const notification = await this.pushNotificationService.send(user.id, {
           title: `Рейс №${route.id} ожидает принятия`,
           body: `Рейс №${route.id} ожидает принятия`,
-          sub: { connect: { id: pushNotificationSub.id } },
         });
       }),
     );

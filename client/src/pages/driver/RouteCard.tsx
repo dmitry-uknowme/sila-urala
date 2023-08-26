@@ -1,6 +1,7 @@
 import { useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { Button, List, Panel } from "rsuite";
+import formatDate from "../../helpers/formatDate";
 import driverCompleteRoute from "../../model/route/api/driverCompleteRoute";
 import driverStartRoute from "../../model/route/api/driverStartRoute";
 import { IRoute } from "../../model/route/IRoute";
@@ -26,7 +27,7 @@ const RouteCard: React.FC<RouteCardProps> = ({ user, route, routeName }) => {
           Начальная точка: <b>{route?.start_spot_text}</b>
         </p> */}
         <p>
-          Дата начала: <b>{route.start_date}</b>
+          Дата начала: <b>{formatDate(route.start_date)}</b>
         </p>
         <p>
           Добавить баллонов:{" "}
@@ -50,7 +51,7 @@ const RouteCard: React.FC<RouteCardProps> = ({ user, route, routeName }) => {
         </p>
         {isDriver ? (
           <div className="mt-3">
-            {route?.status === RouteStatus.STATUS_ACTIVE ? (
+            {route?.status === RouteStatus.STATUS_WAITING ? (
               <Button
                 appearance="primary"
                 onClick={async () => {

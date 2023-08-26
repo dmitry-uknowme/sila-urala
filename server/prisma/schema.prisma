@@ -11,9 +11,9 @@ model User {
   id                     String                @id @default(uuid())
   username               String                @default("admin")
   password               String
-  first_name             String
-  last_name              String
-  middle_name            String
+  first_name             String?
+  last_name              String?
+  middle_name            String?
   spot_id                String?
   role                   UserRole
   spot                   Spot?                 @relation(fields: [spot_id], references: [id])
@@ -78,7 +78,7 @@ model PushNotification {
   title      String?
   body       String?
   status     String?             @default("STATUS_ACTIVE")
-  sub        PushNotificationSub @relation(fields: [sub_id], references: [id])
+  sub        PushNotificationSub @relation(fields: [sub_id], references: [id], onDelete: Cascade)
   sub_id     String
   created_at DateTime            @default(now())
   // User       User?               @relation(fields: [userId], references: [id])

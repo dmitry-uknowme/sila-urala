@@ -46,6 +46,11 @@ const Driver = () => {
           },
           {
             status: {
+              equals: RouteStatus.STATUS_WAITING,
+            },
+          },
+          {
+            status: {
               equals: RouteStatus.STATUS_STARTED,
             },
           },
@@ -75,6 +80,7 @@ const Driver = () => {
   const currentRoute = activeRoutes?.data?.length
     ? activeRoutes?.data?.find(
         (route) =>
+          route.status === RouteStatus.STATUS_WAITING ||
           route.status === RouteStatus.STATUS_ACTIVE ||
           route.status === RouteStatus.STATUS_STARTED
       )
@@ -87,12 +93,11 @@ const Driver = () => {
 
   const [driverFormValue, setDriverFormValue] = useState(driver?.data);
   const [driverFormType, setDriverFormType] = useState(null);
-
   useEffect(() => {
-    if (driverFormType !== "UPDATE") {
+    if (driverFormType !== "UPDATE" && driver?.data) {
       setDriverFormValue(driver?.data);
     }
-  }, [userId, driverFormType]);
+  }, [driver, driverFormType]);
 
   return (
     <MainTemplate>
@@ -160,7 +165,7 @@ const Driver = () => {
                 setActiveNav("completed");
               }}
             >
-              Завершенные рейсы
+              Завершенные рейсы ({completedRoutes?.data?.length})
             </Nav.Item>
           </Nav>
           <div className="mt-3">

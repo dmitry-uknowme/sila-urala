@@ -36,23 +36,40 @@ export class PushNotificationService {
   }
 
   async findAll(filter?: Prisma.PushNotificationSubWhereInput) {
-    const subs = this.prisma.pushNotificationSub.findMany({ where: filter });
+    const subs = await this.prisma.pushNotificationSub.findMany({
+      where: filter,
+    });
     return subs;
   }
 
   async getSub(filter?: Prisma.PushNotificationSubWhereInput) {
-    const subs = this.prisma.pushNotificationSub.findFirst({
+    const subs = await this.prisma.pushNotificationSub.findFirst({
       where: filter,
       orderBy: { created_at: 'asc' },
     });
-    console.log('subbb', subs);
     return subs;
   }
 
-  async send(userId: string, data: Prisma.PushNotificationCreateInput) {
+  async removeSub(id: string) {
+    const sub = await this.prisma.pushNotificationSub.delete({
+      where: { id },
+    });
+    return sub;
+  }
+
+  async send(
+    userId: string,
+    data: {
+      title?: string;
+      body?: string;
+    },
+  ) {
     const notificationSub = await this.prisma.pushNotificationSub.findFirst({
       where: { user: { id: userId } },
     });
+
+    if (!notificationSub) return;
+
     const notification = await this.prisma.pushNotification.create({
       data: { ...data, sub: { connect: { id: notificationSub.id } } },
     });
@@ -71,7 +88,8 @@ export class PushNotificationService {
 
       console.log('rreee', result);
     } catch (error) {
-      console.log('errr', error);
+      await this.removeSub(notificationSub.id);
+      // console.log('errr', error);
     }
   }
 

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { User, Prisma, UserRole } from '@prisma/client';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import { UpdateUserDTO } from './dto/update-user.dto';
@@ -22,7 +22,7 @@ export class UserService {
       cursor,
       where,
       orderBy,
-      include: { spot: true, car: true },
+      include: { push_notification_subs: true, spot: true, car: true },
     });
   }
 
@@ -34,31 +34,50 @@ export class UserService {
     return user;
   }
 
-  async create(
-    data: Prisma.UserCreateInput /* CreateUserDTO */,
-  ): Promise<User> {
+  async create(data: CreateUserDTO): Promise<User> {
+    if (data.role === UserRole.ROLE_EMPLOYEE_DRIVER && !data.car_id) {
+      throw new BadRequestException({
+        message: ['Выберите автомобиль для сотрудника'],
+        statusCode: 400,
+      });
+    }
+
+    if (data.role === UserRole.ROLE_EMPLOYEE_SELLER && !data.spot_id) {
+      throw new BadRequestException({
+        message: ['Выберите точку для сотрудника'],
+        statusCode: 400,
+      });
+    }
+
     const user = await this.prisma.user.create({
       data: {
         username: data?.username,
         password: data?.password,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        middle_name: data.middle_name,
+        first_name: data?.first_name,
+        last_name: data?.last_name,
+        middle_name: data?.middle_name,
         role: data.role,
-        //@ts-expect-error
-        car: data.car_id && { connect: { id: data.car_id } },
-        //@ts-expect-error
-        spot: data.spot_id && { connect: { id: data.spot_id } },
+        car: data?.car_id && { connect: { id: data.car_id } },
+        spot: data?.spot_id && { connect: { id: data.spot_id } },
       },
     });
 
     return user;
   }
 
-  async update(
-    userId: string,
-    data: Prisma.UserUpdateInput /* UpdateUserDTO */,
-  ): Promise<User> {
+  async update(userId: string, data: UpdateUserDTO): Promise<User> {
+    if (data.role === UserRole.ROLE_EMPLOYEE_DRIVER && !data.car_id) {
+      throw new BadRequestException({
+        message: ['Выберите автомобиль для сотрудника'],
+        statusCode: 400,
+      });
+    }
+    if (data.role === UserRole.ROLE_EMPLOYEE_SELLER && !data.spot_id) {
+      throw new BadRequestException({
+        message: ['Выберите точку для сотрудника'],
+        statusCode: 400,
+      });
+    }
     const user = await this.prisma.user.update({
       where: { id: userId },
       data: {
@@ -68,10 +87,7 @@ export class UserService {
         last_name: data.last_name,
         middle_name: data.middle_name,
         role: data.role,
-        //@ts-expect-error
-        // cars: data.car_id && { connect: { id: data.car_id } },
         car: data.car_id && { connect: { id: data.car_id } },
-        //@ts-expect-error
         spot: data.spot_id && { connect: { id: data.spot_id } },
       },
     });

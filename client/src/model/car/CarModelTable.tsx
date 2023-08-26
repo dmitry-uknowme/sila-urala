@@ -12,7 +12,7 @@ const CarModelTable = () => {
   const { data, isFetching } = useQuery(["cars"], async () => await getCars());
   return (
     <Table
-      title={`Автомобили (${data?.length})`}
+      title={`Автомобили (${data?.length ?? ""})`}
       form={{
         create: {
           title: "Добавление автомобиля",
@@ -52,7 +52,7 @@ const CarModelTable = () => {
       }}
       columnData={[
         { header: "Гос. номер", key: "number_plate" },
-        { header: "Вместимость", key: "capability" },
+        { header: "Вместимость (л)", key: "capability" },
       ]}
       data={data}
       formValue={parentFormValue}

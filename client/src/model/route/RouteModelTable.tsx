@@ -30,12 +30,11 @@ const RouteModelTable = () => {
 
   return (
     <Table
-      title={`Рейсы (${data?.length})`}
+      title={`Рейсы (${data?.length ?? ""})`}
       form={{
         create: {
           title: "Добавление рейса",
           onSubmit: async (data) => {
-            console.log("on subbb", data);
             const response = await createRoute(data.car_id, {
               ...data,
             });

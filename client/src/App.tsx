@@ -4,6 +4,7 @@ import axios, { AxiosError } from "axios";
 import AuthStore from "./store/AuthStore";
 import { createContext, useEffect } from "react";
 import registerPushNotifications from "./worker/registerPushNotifications";
+import { toast } from "react-toastify";
 
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use((config) => {
@@ -23,9 +24,22 @@ axios.interceptors.response.use(
   },
   (error: AxiosError) => {
     if (error?.response?.status === 401) {
-      // console.log("errr auth", error?.response?.status);
       localStorage.removeItem("authToken");
     }
+
+    if (error?.response?.status === 400) {
+      const errors = error?.response.data?.message as string[];
+      if (errors?.length) {
+        const errorsMessage = errors.length > 1 ? errors.join(".") : errors[0];
+        toast.error(`Ошибка. ${errorsMessage}`);
+      }
+    }
+    if (error?.response?.status === 500) {
+      toast.error(`Возникла непредвиденная ошибка на сервере`);
+    }
+
+    throw new AxiosError({ ...error, _isHandled: true });
+    // return { ...error, _isHandled: true };
   }
 );
 

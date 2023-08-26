@@ -22,7 +22,9 @@ const UserModelTable = () => {
       spot_address_name: user?.spot?.address_name,
       car_id: user?.car?.id ?? null,
       car_number_plate: user?.car?.number_plate ?? null,
-      full_name: `${user.last_name} ${user.first_name} ${user.middle_name}`,
+      full_name: `${user.last_name ?? ""} ${user.first_name ?? ""} ${
+        user.middle_name ?? ""
+      }`,
     }));
   });
 

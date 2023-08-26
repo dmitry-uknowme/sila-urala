@@ -24,8 +24,11 @@ export class SpotService {
     });
   }
 
-  async findOne(id: Prisma.SpotWhereUniqueInput): Promise<Spot> {
-    const user = await this.prisma.spot.findUnique({ where: id });
+  async findOne(filter: Prisma.SpotWhereInput): Promise<Spot> {
+    const user = await this.prisma.spot.findFirst({
+      where: filter,
+      include: { routes: true, users: true },
+    });
     return user;
   }
 

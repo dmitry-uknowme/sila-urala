@@ -19,17 +19,21 @@ const registerPushNotifications = async (userId: string) => {
         endpoint: prevSub.endpoint,
       }
     );
-    if (!data?.length) {
-      await prevSub.unsubscribe();
-    }
-    return;
+
+    if (data?.length) return;
+
+    await prevSub.unsubscribe();
+    console.log("ddddd", data);
   }
-  let subData = await pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey:
-      "BLAXPY1VOrG3t5Aaaw4m5YopEwKoEifizU18J36UxuF_udVbGcVA7N76_mk0R6YgF42Oy2FfGanznZzD4bfvHuU",
-  });
-  subData = subData.toJSON();
+
+  const subData = (
+    await pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey:
+        "BLAXPY1VOrG3t5Aaaw4m5YopEwKoEifizU18J36UxuF_udVbGcVA7N76_mk0R6YgF42Oy2FfGanznZzD4bfvHuU",
+    })
+  ).toJSON();
+
   const payload = {
     endpoint: subData.endpoint,
     exp_time: subData.expirationTime,

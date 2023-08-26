@@ -4,7 +4,7 @@ import { CustomProvider } from "rsuite";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import ruRU from "rsuite/locales/ru_RU";
-import App from "./App.tsx";
+import App from "./App";
 import "./assets/reset.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "rsuite/dist/rsuite.min.css";
@@ -18,7 +18,7 @@ export const API_URL = `${BASE_URL}/api`;
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { refetchInterval: 3000, refetchOnWindowFocus: true },
+    queries: { refetchInterval: 10000, refetchOnWindowFocus: true },
   },
 });
 

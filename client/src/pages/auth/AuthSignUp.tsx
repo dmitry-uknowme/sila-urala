@@ -70,9 +70,9 @@ const AuthSignUp = ({ setFormType }) => {
         name={"role"}
         accepter={SelectPicker}
         data={Object.keys(UserRoleLocalized)
-          .filter(
-            (key) => UserRoleLocalized[key] !== UserRoleLocalized.ROLE_ADMIN
-          )
+          // .filter(
+          //   (key) => UserRoleLocalized[key] !== UserRoleLocalized.ROLE_ADMIN
+          // )
           .map((key) => ({
             label: UserRoleLocalized[key],
             value: key,

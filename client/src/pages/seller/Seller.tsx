@@ -50,6 +50,11 @@ const Seller = () => {
           },
           {
             status: {
+              equals: RouteStatus.STATUS_WAITING,
+            },
+          },
+          {
+            status: {
               equals: RouteStatus.STATUS_STARTED,
             },
           },
@@ -79,6 +84,7 @@ const Seller = () => {
   const currentRoute = activeRoutes?.data?.length
     ? activeRoutes?.data?.find(
         (route) =>
+          route.status === RouteStatus.STATUS_WAITING ||
           route.status === RouteStatus.STATUS_ACTIVE ||
           route.status === RouteStatus.STATUS_STARTED
       )
@@ -219,7 +225,7 @@ const Seller = () => {
                 setActiveNav("completed");
               }}
             >
-              Завершенные рейсы
+              Завершенные рейсы ({completedRoutes?.data?.length})
             </Nav.Item>
           </Nav>
           <h4 className="rs-panel-header d-flex align-items-center py-0 mt-4">
@@ -240,12 +246,17 @@ const Seller = () => {
                   Макс. вместимость (л): <b>{currentSpot.max_capability}</b>
                 </p>
                 <p>
-                  Текущая вместимость (л): 5л-{currentSpot.tanks5_capability}шт.
-                  13л-
-                  {currentSpot.tanks13_capability}шт. 19л-
-                  {currentSpot.tanks19_capability}шт. ({currentSpot.capability})
+                  Текущая вместимость (л):{" "}
+                  <b>
+                    5л-{currentSpot.tanks5_capability}шт. 13л-
+                    {currentSpot.tanks13_capability}шт. 19л-
+                    {currentSpot.tanks19_capability}шт. (
+                    {currentSpot.capability})
+                  </b>
                 </p>
-                <p>Заполнено за сегодня (л): {currentSpot.capability}</p>
+                <p>
+                  Заполнено за сегодня (л): <b>{currentSpot.capability}</b>
+                </p>
               </div>
             ) : (
               <Loader center />

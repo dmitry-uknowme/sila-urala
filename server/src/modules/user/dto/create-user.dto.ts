@@ -1,34 +1,40 @@
 import { UserRole } from '@prisma/client';
-import { Equals, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import {
+  Equals,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { AllowNullable } from 'src/core/validation/allow-null.validation';
 
 export class CreateUserDTO {
   @IsString()
+  @IsOptional()
   first_name?: string;
 
   @IsString()
+  @IsOptional()
   last_name?: string;
 
   @IsString()
+  @IsOptional()
   middle_name?: string;
 
   @IsString()
-  @AllowNullable()
-  username?: string | null;
+  username: string;
 
   @IsString()
-  @AllowNullable()
-  password?: string | null;
+  password: string;
 
-  @IsNotEmpty()
   @IsEnum(UserRole)
   role: UserRole;
 
   @IsString()
-  @AllowNullable()
-  car_id: string;
+  @IsOptional()
+  car_id?: string;
 
   @IsString()
-  @AllowNullable()
-  spot_id: string;
+  @IsOptional()
+  spot_id?: string;
 }

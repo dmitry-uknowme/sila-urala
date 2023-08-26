@@ -24,12 +24,11 @@ const SpotModelTable = () => {
 
   return (
     <Table
-      title={`Точки (${data?.length})`}
+      title={`Точки (${data?.length ?? ""})`}
       form={{
         create: {
           title: "Добавление точки",
           onSubmit: async (data) => {
-            console.log("on subbb", data);
             const response = await createSpot({
               ...data,
               max_capability: parseFloat(data.max_capability),
@@ -68,7 +67,7 @@ const SpotModelTable = () => {
         },
         fields: [
           { name: "address_name", label: "Адрес" },
-          { name: "max_capability", label: "Макс. вместимость" },
+          { name: "max_capability", label: "Макс. вместимость (л)" },
           { name: "tanks5_capability", label: "Кол-во баллонов 5л (шт.)" },
           { name: "tanks13_capability", label: "Кол-во баллонов 13л (шт.)" },
           { name: "tanks19_capability", label: "Кол-во баллонов 19л (шт.)" },
