@@ -1,6 +1,7 @@
 console.log("worker init");
 self.addEventListener("push", (e) => {
   console.log("on push", e.data, e.data.json());
+  // alert(`on push ${e.data.json()}`);
   const data = e.data.json();
 
   e.waitUntil(
@@ -8,7 +9,7 @@ self.addEventListener("push", (e) => {
       body: data.body,
       image: "https://etpp.ru/full_logo.svg",
       icon: "https://etpp.ru/full_logo.svg",
-      timestamp: 1000 * 60 * 5,
+      // timestamp: 1000 * 60 * 5,
     })
   );
 

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 // import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
+import { AccessToken } from './decorators/access-token.decorator';
 import { Public } from './decorators/public.decorator';
 import { SignUpDTO } from './dto/sign-up.dto';
 
@@ -29,8 +30,8 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('signup')
-  signUp(@Body() dto: SignUpDTO) {
-    return this.authService.signUp(dto);
+  signUp(@Body() dto: SignUpDTO, @AccessToken() accessToken: string) {
+    return this.authService.signUp(dto, accessToken);
   }
 
   @Public()

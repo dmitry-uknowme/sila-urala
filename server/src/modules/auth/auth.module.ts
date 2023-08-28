@@ -5,10 +5,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { AuthGuard } from './auth.guard';
+import { UserService } from '../user/user.service';
 
 @Module({
   imports: [
-    UserModule,
     JwtModule.register({
       global: true,
       secret: 'secret',
@@ -17,6 +17,7 @@ import { AuthGuard } from './auth.guard';
   ],
   providers: [
     AuthService,
+    UserService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

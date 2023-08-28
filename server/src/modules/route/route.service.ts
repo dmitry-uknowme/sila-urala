@@ -125,25 +125,16 @@ export class RouteService {
     const admin = await this.userService.findOne({
       role: UserRole.ROLE_ADMIN,
     });
-    const adminNotificationSub = await this.pushNotificationService.getSub({
-      user_id: admin.id,
-    });
-    if (adminNotificationSub) {
-      const notification = await this.pushNotificationService.send(admin.id, {
-        title: `Пользователь ${driver.username} начал рейс №${route.id}`,
-        body: `Пользователь ${driver.username} №${route.id}`,
-      });
-    }
 
-    const sellerNotificationSub = await this.pushNotificationService.getSub({
-      user_id: admin.id,
+    await this.pushNotificationService.send(admin.id, {
+      title: `Пользователь ${driver.username} начал рейс №${route.id}`,
+      body: `Пользователь ${driver.username} №${route.id}`,
     });
-    if (sellerNotificationSub) {
-      const notification = await this.pushNotificationService.send(seller.id, {
-        title: `Пользователь ${driver.username} начал рейс №${route.id}`,
-        body: `Пользователь ${driver.username} №${route.id}`,
-      });
-    }
+
+    await this.pushNotificationService.send(seller.id, {
+      title: `Пользователь ${driver.username} начал рейс №${route.id}`,
+      body: `Пользователь ${driver.username} №${route.id}`,
+    });
 
     return route;
   }
@@ -210,14 +201,7 @@ export class RouteService {
     await Promise.all(
       routes.map(async (route) => {
         const car = await this.carService.findOne({ id: route.car_id });
-        console.log('c', car);
         const user = await this.userService.findOne({ car_id: car.id });
-        console.log('u', user);
-        const pushNotificationSub = await this.pushNotificationService.getSub({
-          user_id: user.id,
-        });
-        if (!pushNotificationSub) return;
-        console.log('ps', pushNotificationSub);
 
         const notification = await this.pushNotificationService.send(user.id, {
           title: `Рейс №${route.id} ожидает принятия`,

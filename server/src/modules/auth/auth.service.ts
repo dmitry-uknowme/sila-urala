@@ -23,16 +23,19 @@ export class AuthService {
     };
   }
 
-  async signUp(dto: SignUpDTO) {
+  async signUp(dto: SignUpDTO, accessToken: string) {
     const { username, password, role } = dto;
-    const user = await this.userService.create({
-      username,
-      password,
-      first_name: '',
-      last_name: '',
-      middle_name: '',
-      role,
-    });
+    const user = await this.userService.create(
+      {
+        username,
+        password,
+        first_name: '',
+        last_name: '',
+        middle_name: '',
+        role,
+      },
+      accessToken,
+    );
     const payload = { username: user.username, sub: user.id, role: user.role };
     const token = await this.jwtService.signAsync(payload);
     return {

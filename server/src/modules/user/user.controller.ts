@@ -12,6 +12,8 @@ import {
   Param,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { access } from 'fs';
+import { AccessToken } from '../auth/decorators/access-token.decorator';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UserService } from './user.service';
@@ -31,8 +33,8 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() dto: CreateUserDTO) {
-    return this.userService.create(dto);
+  createUser(@AccessToken() accessToken: string, @Body() dto: CreateUserDTO) {
+    return this.userService.create(dto, accessToken);
   }
 
   @Put(':userId')
