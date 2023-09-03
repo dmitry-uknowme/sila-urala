@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, PushNotificationSubStatus } from '@prisma/client';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import * as webPush from 'web-push';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class PushNotificationService {
-  constructor(private prisma: PrismaService) {
+  constructor(private userService: UserService, private prisma: PrismaService) {
     this.init();
   }
 
@@ -23,8 +24,9 @@ export class PushNotificationService {
   }
 
   async createSub(userId: string, data: Prisma.PushNotificationSubCreateInput) {
+    const user = await this.userService.findOne({ id: userId });
     const prevSubs = await this.findAllSubs({
-      user_id: { not: userId },
+      user: { id: userId, role: { not: user.role } },
       status: { not: PushNotificationSubStatus.STATUS_ARCHIVED },
     });
 
