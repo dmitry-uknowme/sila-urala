@@ -16,7 +16,9 @@ const registerPushNotifications = async (userId: string) => {
     const { data } = await axios.post(
       `${API_URL}/push_notifications/subs/search`,
       {
+        user_id: userId,
         endpoint: prevSub.endpoint,
+        status: { not: "STATUS_ARCHIVED" },
       }
     );
 

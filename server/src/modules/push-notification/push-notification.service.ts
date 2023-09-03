@@ -23,6 +23,21 @@ export class PushNotificationService {
   }
 
   async createSub(userId: string, data: Prisma.PushNotificationSubCreateInput) {
+    const prevSubs = await this.findAllSubs({
+      user_id: { not: userId },
+      status: { not: PushNotificationSubStatus.STATUS_ARCHIVED },
+    });
+
+    console.log('prev subsss on device', prevSubs);
+
+    await Promise.all(
+      prevSubs.map(async (sub) =>
+        this.updateSub(sub.id, {
+          status: PushNotificationSubStatus.STATUS_ARCHIVED,
+        }),
+      ),
+    );
+
     const sub = await this.prisma.pushNotificationSub.create({
       data: {
         endpoint: data.endpoint,
