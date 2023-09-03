@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, PushNotificationSubStatus } from '@prisma/client';
 import { PrismaService } from 'src/core/prisma/prisma.service';
 import * as webPush from 'web-push';
 
@@ -35,14 +35,25 @@ export class PushNotificationService {
     return sub;
   }
 
-  async findAll(filter?: Prisma.PushNotificationSubWhereInput) {
+  async updateSub(id: string, data: Prisma.PushNotificationSubUpdateInput) {
+    const sub = await this.prisma.pushNotificationSub.update({
+      where: { id },
+      data,
+    });
+    return sub;
+  }
+
+  async findAllSubs(filter?: Prisma.PushNotificationSubWhereInput) {
     const subs = await this.prisma.pushNotificationSub.findMany({
-      where: filter,
+      where: filter || {
+        status: { not: PushNotificationSubStatus.STATUS_ARCHIVED },
+      },
+      orderBy: { created_at: 'asc' },
     });
     return subs;
   }
 
-  async getSub(filter?: Prisma.PushNotificationSubWhereInput) {
+  async findOneSub(filter?: Prisma.PushNotificationSubWhereInput) {
     const subs = await this.prisma.pushNotificationSub.findFirst({
       where: filter,
       orderBy: { created_at: 'asc' },
@@ -57,40 +68,46 @@ export class PushNotificationService {
     return sub;
   }
 
-  async send(
+  async sendToUser(
     userId: string,
     data: {
       title?: string;
       body?: string;
     },
   ) {
-    const notificationSub = await this.prisma.pushNotificationSub.findFirst({
-      where: { user: { id: userId } },
+    const notificationSubs = await this.findAllSubs({
+      user: { id: userId },
     });
 
-    if (!notificationSub) return;
+    if (!notificationSubs.length) return;
 
-    const notification = await this.prisma.pushNotification.create({
-      data: { ...data, sub: { connect: { id: notificationSub.id } } },
-    });
+    notificationSubs.map(async (sub) => {
+      const notification = await this.prisma.pushNotification.create({
+        data: { ...data, sub: { connect: { id: sub.id } } },
+      });
 
-    try {
-      const result = await webPush.sendNotification(
-        {
-          endpoint: notificationSub.endpoint,
-          keys: {
-            auth: notificationSub.auth_token,
-            p256dh: notificationSub.public_key,
+      try {
+        const result = await webPush.sendNotification(
+          {
+            endpoint: sub.endpoint,
+            keys: {
+              auth: sub.auth_token,
+              p256dh: sub.public_key,
+            },
           },
-        },
-        JSON.stringify({ title: notification.title, body: notification.body }),
-      );
+          JSON.stringify({
+            title: notification.title,
+            body: notification.body,
+          }),
+        );
 
-      console.log('rreee', result);
-    } catch (error) {
-      await this.removeSub(notificationSub.id);
-      // console.log('errr', error);
-    }
+        console.log('rreee', result);
+      } catch (error) {
+        await this.updateSub(sub.id, {
+          status: PushNotificationSubStatus.STATUS_ARCHIVED,
+        });
+      }
+    });
   }
 
   //   acceptPushNotification = async (

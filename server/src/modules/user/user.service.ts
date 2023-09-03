@@ -8,8 +8,7 @@ import { AuthService } from '../auth/auth.service';
 @Injectable()
 export class UserService {
   constructor(
-    private prisma: PrismaService,
-    private authService: AuthService,
+    private prisma: PrismaService, // private authService: AuthService,
   ) {}
 
   async findAll(params: {
@@ -39,24 +38,24 @@ export class UserService {
   }
 
   async create(data: CreateUserDTO, accessToken: string): Promise<User> {
-    const session = await this.authService.getSession(accessToken);
-    const userRole = session?.user?.role;
+    // const session = await this.authService.getSession(accessToken);
+    // const userRole = session?.user?.role;
 
-    if (userRole && userRole === UserRole.ROLE_ADMIN) {
-      if (data.role === UserRole.ROLE_EMPLOYEE_DRIVER && !data.car_id) {
-        throw new BadRequestException({
-          message: ['Выберите автомобиль для сотрудника'],
-          statusCode: 400,
-        });
-      }
+    // if (userRole && userRole === UserRole.ROLE_ADMIN) {
+    //   if (data.role === UserRole.ROLE_EMPLOYEE_DRIVER && !data.car_id) {
+    //     throw new BadRequestException({
+    //       message: ['Выберите автомобиль для сотрудника'],
+    //       statusCode: 400,
+    //     });
+    //   }
 
-      if (data.role === UserRole.ROLE_EMPLOYEE_SELLER && !data.spot_id) {
-        throw new BadRequestException({
-          message: ['Выберите точку для сотрудника'],
-          statusCode: 400,
-        });
-      }
-    }
+    //   if (data.role === UserRole.ROLE_EMPLOYEE_SELLER && !data.spot_id) {
+    //     throw new BadRequestException({
+    //       message: ['Выберите точку для сотрудника'],
+    //       statusCode: 400,
+    //     });
+    //   }
+    // }
 
     const user = await this.prisma.user.create({
       data: {

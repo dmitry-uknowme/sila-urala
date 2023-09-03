@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { AuthGuard } from './auth.guard';
 import { UserService } from '../user/user.service';
+import { PrismaService } from 'src/core/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -14,10 +15,10 @@ import { UserService } from '../user/user.service';
       secret: 'secret',
       signOptions: { expiresIn: '60m' },
     }),
+    UserModule,
   ],
   providers: [
     AuthService,
-    UserService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

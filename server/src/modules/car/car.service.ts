@@ -64,19 +64,13 @@ export class CarService {
         car: { id: carId },
       });
 
-      const notificationSub = await this.pushNotificationService.getSub({
-        user_id: driver.id,
-      });
-
-      if (notificationSub) {
-        const notification = await this.pushNotificationService.send(
-          driver.id,
-          {
-            title: `Добавлен активный рейс`,
-            body: `Добавлен активный рейс`,
-          },
-        );
-      }
+      const notification = await this.pushNotificationService.sendToUser(
+        driver.id,
+        {
+          title: `Добавлен активный рейс`,
+          body: `Добавлен активный рейс`,
+        },
+      );
     }
 
     return car;

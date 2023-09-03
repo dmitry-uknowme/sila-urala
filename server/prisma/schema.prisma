@@ -88,16 +88,16 @@ model PushNotification {
 }
 
 model PushNotificationSub {
-  id                String                  @id @default(uuid())
-  status            PushNotificationStatus? @default(STATUS_ACTIVE)
+  id                String                     @id @default(uuid())
+  status            PushNotificationSubStatus? @default(STATUS_ACTIVE)
   endpoint          String
   exp_time          String?
   public_key        String
   auth_token        String
   push_notification PushNotification[]
-  user              User?                   @relation(fields: [user_id], references: [id])
+  user              User?                      @relation(fields: [user_id], references: [id])
   user_id           String?
-  created_at        DateTime                @default(now())
+  created_at        DateTime                   @default(now())
 
   @@map("push_notifications_subs")
 }
@@ -119,4 +119,9 @@ enum RouteStatus {
 
 enum PushNotificationStatus {
   STATUS_ACTIVE
+}
+
+enum PushNotificationSubStatus {
+  STATUS_ACTIVE
+  STATUS_ARCHIVED
 }

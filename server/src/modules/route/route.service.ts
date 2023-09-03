@@ -54,7 +54,7 @@ export class RouteService {
         spot: { id: route.car_id },
       });
 
-      await this.pushNotificationService.send(driver.id, {
+      await this.pushNotificationService.sendToUser(driver.id, {
         title: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
           route.start_date,
         )}`,
@@ -63,7 +63,7 @@ export class RouteService {
         )}`,
       });
 
-      await this.pushNotificationService.send(seller.id, {
+      await this.pushNotificationService.sendToUser(seller.id, {
         title: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
           route.start_date,
         )}`,
@@ -88,7 +88,7 @@ export class RouteService {
         spot: { id: route.end_spot_id },
       });
 
-      await this.pushNotificationService.send(driver.id, {
+      await this.pushNotificationService.sendToUser(driver.id, {
         title: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
           route.start_date,
         )}`,
@@ -97,7 +97,7 @@ export class RouteService {
         )}`,
       });
 
-      await this.pushNotificationService.send(seller.id, {
+      await this.pushNotificationService.sendToUser(seller.id, {
         title: `Добавлен активный рейс №${route.id}. Дата начала: ${formatDate(
           route.start_date,
         )}`,
@@ -126,12 +126,12 @@ export class RouteService {
       role: UserRole.ROLE_ADMIN,
     });
 
-    await this.pushNotificationService.send(admin.id, {
+    await this.pushNotificationService.sendToUser(admin.id, {
       title: `Пользователь ${driver.username} начал рейс №${route.id}`,
       body: `Пользователь ${driver.username} №${route.id}`,
     });
 
-    await this.pushNotificationService.send(seller.id, {
+    await this.pushNotificationService.sendToUser(seller.id, {
       title: `Пользователь ${driver.username} начал рейс №${route.id}`,
       body: `Пользователь ${driver.username} №${route.id}`,
     });
@@ -159,14 +159,14 @@ export class RouteService {
     });
 
     const admin = await this.userService.findOne({ role: UserRole.ROLE_ADMIN });
-    const notificationSub = await this.pushNotificationService.getSub({
-      user_id: admin.id,
-    });
 
-    const notification = await this.pushNotificationService.send(admin.id, {
-      title: `Пользователь ${driver.username} завершил рейс №${route.id}`,
-      body: `Пользователь ${driver.username} завершил рейс №${route.id}`,
-    });
+    const notification = await this.pushNotificationService.sendToUser(
+      admin.id,
+      {
+        title: `Пользователь ${driver.username} завершил рейс №${route.id}`,
+        body: `Пользователь ${driver.username} завершил рейс №${route.id}`,
+      },
+    );
 
     return route;
   }
@@ -203,10 +203,13 @@ export class RouteService {
         const car = await this.carService.findOne({ id: route.car_id });
         const user = await this.userService.findOne({ car_id: car.id });
 
-        const notification = await this.pushNotificationService.send(user.id, {
-          title: `Рейс №${route.id} ожидает принятия`,
-          body: `Рейс №${route.id} ожидает принятия`,
-        });
+        const notification = await this.pushNotificationService.sendToUser(
+          user.id,
+          {
+            title: `Рейс №${route.id} ожидает принятия`,
+            body: `Рейс №${route.id} ожидает принятия`,
+          },
+        );
       }),
     );
 

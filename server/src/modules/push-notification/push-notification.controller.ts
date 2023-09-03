@@ -26,35 +26,24 @@ export class PushNotificationController {
     this.pushNotificationService.createSub(userId, dto);
   }
 
+  @Put('subId')
+  async updateNotificationSub(
+    @Param('subId') subId: string,
+    @Body() dto: Prisma.PushNotificationSubUpdateInput,
+  ) {
+    this.pushNotificationService.updateSub(subId, dto);
+  }
+
   @Post('users/:userId')
   async sendNotification(
     @Param('userId') userId: string,
     @Body() dto: Prisma.PushNotificationCreateInput,
   ) {
-    this.pushNotificationService.send(userId, dto);
+    this.pushNotificationService.sendToUser(userId, dto);
   }
 
-  // @Post(':subId/send')
-  // async sendNotification(@Param('notificationId') subId:string) {
-
-  // }
   @Post('subs/search')
   searchNotificationSub(@Body() filter: Prisma.PushNotificationSubWhereInput) {
-    return this.pushNotificationService.findAll(filter);
+    return this.pushNotificationService.findAllSubs(filter);
   }
-
-  //   @Post()
-  //   createSpot(@Body() dto: CreateSpotDTO) {
-  //     return this.spotService.create(dto);
-  //   }
-
-  //   @Put(':spotId')
-  //   updateSpot(@Param('spotId') spotId: string, @Body() dto: UpdateSpotDTO) {
-  //     return this.spotService.update(spotId, dto);
-  //   }
-
-  //   @Delete(':spotId')
-  //   removeSpot(@Param('spotId') spotId: string) {
-  //     return this.spotService.remove(spotId);
-  //   }
 }
